@@ -1,5 +1,5 @@
-import Shape from "./Shape";
 import Container from "./Container";
+import Shape from "./Shape";
 
 export default class Map extends Container {
     public static mainmap: number[][];

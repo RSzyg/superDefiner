@@ -23,6 +23,7 @@ export default class Shape {
     }
 
     public saveTriangle(p1: object, p2: object, p3: object) {
+        this.type = "triangle";
         this.position = [p1, p2, p3];
     }
 

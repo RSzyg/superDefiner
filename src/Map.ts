@@ -3,9 +3,10 @@ import Container from "./Container";
 
 export default class Map extends Container {
     public static mainmap: number[][];
-    public static rect: Array<{[key: string]: any}>;
+    public static rect: Shape[];
     constructor() {
         super();
+        Map.rect = [];
         for (let i = 0; i < 16; i++) {
             Map.rect[i] = new Shape();
         }
@@ -30,7 +31,7 @@ export default class Map extends Container {
         Map.rect[15].saveRect(760, 720, 40, 40);
         for (let i = 0; i < 16; i++) {
             Map.rect[i].saveFill("brown");
-            Map.rect[i].addChild();
+            this.addChild(Map.rect[i]);
         }
     }
 }

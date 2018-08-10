@@ -15,7 +15,7 @@ export default class Container {
                 case "rect":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position[0];
-                        Container.mainCanvas.ctx.fillRect(pos.x, pos.y, shp.width, shp.height);
+                        Container.mainCanvas.ctx.rect(pos.x, pos.y, shp.width, shp.height);
                     }
                     break;
                 case "circle":

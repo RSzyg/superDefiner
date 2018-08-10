@@ -1,5 +1,7 @@
-const greeting: string = "hello, world";
+import Container from "./Container";
+import { start } from "./Loading";
 
 window.onload = () => {
-    document.body.innerText = greeting;
+    start();
+    Container.create().render();
 };

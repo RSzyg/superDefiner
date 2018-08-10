@@ -4,7 +4,7 @@ import Shape from "./Shape";
 export default class Container {
     public static create() {
         if (Container.mainCanvas === undefined) {
-            Container.mainCanvas = new Canvas(800, 1000, "1");
+            Container.mainCanvas = new Canvas(1000, 800, "1");
         }
         return this;
     }
@@ -24,7 +24,7 @@ export default class Container {
                         Container.mainCanvas.ctx.arc(pos.x, pos.y, shp.radius, 0, 2 * Math.PI);
                     }
                     break;
-                case "Triangle":
+                case "triangle":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position.shift();
                         Container.mainCanvas.ctx.moveTo(pos.x, pos.y);

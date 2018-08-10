@@ -1,7 +1,7 @@
 export default class Canvas {
     public canvas: HTMLCanvasElement;
     public ctx: CanvasRenderingContext2D;
-    constructor(height: number, width: number, zIndex: string) {
+    constructor(width: number, height: number, zIndex: string) {
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
         this.canvas.height = height;

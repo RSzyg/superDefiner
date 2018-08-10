@@ -34,6 +34,15 @@ export default class Container {
                         }
                     }
                     break;
+                case "arc":
+                    if (shp.position !== undefined) {
+                        const pos: {[key: string]: number} = shp.position[0];
+                        Container.mainCanvas.ctx.moveTo(
+                            pos.x + shp.radius * Math.cos(shp.startAngle),
+                            pos.y + shp.radius * Math.sin(shp.endAngle),
+                        );
+                        Container.mainCanvas.ctx.arc(pos.x, pos.y, shp.radius, shp.startAngle, shp.endAngle);
+                    }
                 default:
                     break;
             }

@@ -18,7 +18,7 @@ export class Board extends Container {
 
     public createBoard(x: number, y: number) {
         this.main.saveRect(x * 40, y * 40, 240, 80);
-        this.main.saveFill("yellow");
+        this.main.saveFill("orange");
         this.texture[0].saveArc(x * 40 + 180, y * 40 - 140, 150, 1.2, 1.95);
         this.texture[1].saveArc(x * 40 + 180, y * 40 - 130, 150, 1.16, 2.1);
         this.texture[2].saveArc(x * 40 + 180, y * 40 - 120, 150, 1.16, 2.21);

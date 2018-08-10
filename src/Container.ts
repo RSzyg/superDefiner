@@ -10,23 +10,27 @@ export default class Container {
     }
 
     public static render() {
+        Container.mainCanvas.canvas.height = Container.mainCanvas.canvas.height;
         for (const shp of Container.elements) {
             switch (shp.type) {
                 case "rect":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position[0];
+                        Container.mainCanvas.ctx.beginPath();
                         Container.mainCanvas.ctx.rect(pos.x, pos.y, shp.width, shp.height);
                     }
                     break;
                 case "circle":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position[0];
+                        Container.mainCanvas.ctx.beginPath();
                         Container.mainCanvas.ctx.arc(pos.x, pos.y, shp.radius, 0, 2 * Math.PI);
                     }
                     break;
                 case "triangle":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position.shift();
+                        Container.mainCanvas.ctx.beginPath();
                         Container.mainCanvas.ctx.moveTo(pos.x, pos.y);
                         shp.position.push(pos);
                         for (const point of shp.position) {
@@ -37,9 +41,10 @@ export default class Container {
                 case "arc":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position[0];
+                        Container.mainCanvas.ctx.beginPath();
                         Container.mainCanvas.ctx.moveTo(
                             pos.x + shp.radius * Math.cos(shp.startAngle),
-                            pos.y + shp.radius * Math.sin(shp.endAngle),
+                            pos.y + shp.radius * Math.sin(shp.startAngle),
                         );
                         Container.mainCanvas.ctx.arc(pos.x, pos.y, shp.radius, shp.startAngle, shp.endAngle);
                     }
@@ -54,6 +59,7 @@ export default class Container {
                 Container.mainCanvas.ctx.strokeStyle = shp.strokeStyle;
                 Container.mainCanvas.ctx.stroke();
             }
+            Container.mainCanvas.ctx.closePath();
         }
 
         requestAnimationFrame(() => Container.render());

@@ -33,5 +33,6 @@ export default class Map extends Container {
             Map.rect[i].saveFill("brown");
             this.addChild(Map.rect[i]);
         }
+        return this;
     }
 }

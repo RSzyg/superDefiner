@@ -45,15 +45,15 @@ export default class Map extends Container {
         }
 
         for (let i = 0; i < 64; i++) {
-            Map.rectLeft[i].saveFill("brown");
+            Map.rectLeft[i].saveFill("#8B0000");
             this.addChild(Map.rectLeft[i]);
         }
         for (let i = 0; i < 64; i++) {
-            Map.rectRight[i].saveFill("brown");
+            Map.rectRight[i].saveFill("#8B0000");
             this.addChild(Map.rectRight[i]);
         }
         for (let i = 0; i < 5; i++) {
-            Map.rectMid[i].saveFill("brown");
+            Map.rectMid[i].saveFill("#8B0000");
             this.addChild(Map.rectMid[i]);
         }
         for (let i = 0; i < 21; i++) {

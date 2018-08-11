@@ -2,11 +2,16 @@ import Container from "./Container";
 import Shape from "./Shape";
 
 export class Board extends Container {
+    public static id: number;
+    public uuid: string;
     public main: Shape;
     public texture: Shape[];
+    public draggable: boolean;
 
     constructor() {
         super();
+        Board.id = 0;
+        this.draggable = false;
         this.main = new Shape();
         this.texture = [];
         this.addChild(this.main);
@@ -18,16 +23,30 @@ export class Board extends Container {
 
     public createBoard(x: number, y: number) {
         this.main.saveRect(x * 40, y * 40, 240, 80);
-        this.main.saveFill("orange");
-        this.texture[0].saveArc(x * 40 + 180, y * 40 - 140, 150, 1.2, 1.95);
-        this.texture[1].saveArc(x * 40 + 180, y * 40 - 130, 150, 1.16, 2.1);
+        this.main.saveFill("#EE7942");
+        this.uuid = "Board" + Board.id;
+        this.draggable = true;
+        this.texture[0].saveArc(x * 40 + 180, y * 40 - 140, 150, 1.22, 1.93);
+        this.texture[1].saveArc(x * 40 + 180, y * 40 - 130, 150, 1.16, 2.08);
         this.texture[2].saveArc(x * 40 + 180, y * 40 - 120, 150, 1.16, 2.21);
-        this.texture[3].saveArc(x * 40 + 60, y * 40 + 200, 150, 10.58, 11.65);
-        this.texture[4].saveArc(x * 40 + 60, y * 40 + 210, 150, 10.58, 11.52);
-        this.texture[5].saveArc(x * 40 + 60, y * 40 + 220, 150, 10.62, 11.37);
+        this.texture[3].saveArc(x * 40 + 60, y * 40 + 200, 150, 10.59, 11.64);
+        this.texture[4].saveArc(x * 40 + 60, y * 40 + 210, 150, 10.59, 11.51);
+        this.texture[5].saveArc(x * 40 + 60, y * 40 + 220, 150, 10.63, 11.36);
         for (let i = 0; i < 6; i++) {
             this.texture[i].saveStroke("black", 2);
         }
+        Board.id++;
+    }
+
+    public click(x: number, y: number) {
+        if (x < this.main.position[0].x + 240 && x > this.main.position[0].x) {
+            if (y < this.main.position[0].y + 80 && y > this.main.position[0].y) {
+                if (this.draggable) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     get x(): number {

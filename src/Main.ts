@@ -1,3 +1,4 @@
+import Container from "./Container";
 import * as Goods from "./Goods";
 import Map from "./Map";
 
@@ -33,6 +34,8 @@ export default class Main {
         });
         window.addEventListener("mouseup", (event) => { this.dragEnd(event); });
         window.addEventListener("touchend", (event) => { this.dragEnd(event); });
+
+        window.addEventListener("wheel", (event) => { this.zoom(event); });
     }
 
     private dragBefore(event: any) {
@@ -58,5 +61,13 @@ export default class Main {
 
     private dragEnd(event: any) {
         this.dragingGoods = undefined;
+    }
+
+    private zoom(event: MouseWheelEvent) {
+        if (event.deltaY > 0) {
+            Container.zoom(-0.05);
+        } else if (event.deltaY < 0) {
+            Container.zoom(0.05);
+        }
     }
 }

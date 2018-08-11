@@ -39,8 +39,14 @@ export class Board extends Container {
     }
 
     public click(x: number, y: number) {
-        if (x < this.main.position[0].x + 240 && x > this.main.position[0].x) {
-            if (y < this.main.position[0].y + 80 && y > this.main.position[0].y) {
+        if (
+            x < (this.main.position[0].x + 240) * Container.scale - Container.cameraX &&
+            x > this.main.position[0].x - Container.cameraX
+        ) {
+            if (
+                y < (this.main.position[0].y + 80) * Container.scale - Container.cameraY &&
+                y > this.main.position[0].y * Container.scale - Container.cameraY
+            ) {
                 if (this.draggable) {
                     return true;
                 }

@@ -18,8 +18,8 @@ export default class Shape {
     }
 
     public saveRect(x: number, y: number, width: number, height: number) {
-        this.uuid = Date() + Shape.id;
         this.type = "rect";
+        this.uuid = this.type + Shape.id;
         this.position = [{ x, y }];
         this.width = width;
         this.height = height;
@@ -28,8 +28,8 @@ export default class Shape {
     }
 
     public saveCircle(x: number, y: number, radius: number) {
-        this.uuid = Date() + Shape.id;
         this.type = "circle";
+        this.uuid = this.type + Shape.id;
         this.position = [{ x, y }];
         this.radius = radius;
         Shape.id ++;
@@ -37,8 +37,8 @@ export default class Shape {
     }
 
     public saveArc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
-        this.uuid = Date() + Shape.id;
         this.type = "arc";
+        this.uuid = this.type + Shape.id;
         this.position = [{ x, y }];
         this.radius = radius;
         this.startAngle = startAngle;
@@ -48,16 +48,16 @@ export default class Shape {
     }
 
     public saveTriangle(p1: {[key: string]: any}, p2: {[key: string]: any}, p3: {[key: string]: any}) {
-        this.uuid = Date() + Shape.id;
         this.type = "triangle";
+        this.uuid = this.type + Shape.id;
         this.position = [p1, p2, p3];
         Shape.id ++;
         return this;
     }
 
     public saveLine(p1: {[key: string]: any}, p2: {[key: string]: any}) {
-        this.uuid = Date() + Shape.id;
         this.type = "line";
+        this.uuid = this.type + Shape.id;
         this.position = [p1, p2];
         Shape.id ++;
         return this;

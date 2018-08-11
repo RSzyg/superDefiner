@@ -48,6 +48,20 @@ export default class Container {
                         );
                         Container.mainCanvas.ctx.arc(pos.x, pos.y, shp.radius, shp.startAngle, shp.endAngle);
                     }
+                    break;
+                case "line":
+                    if (shp.position !== undefined) {
+                        let pos: {[key: string]: number} = shp.position[0];
+                        Container.mainCanvas.ctx.beginPath();
+                        if (pos) {
+                            Container.mainCanvas.ctx.moveTo(pos.x, pos.y);
+                        }
+                        pos = shp.position[1];
+                        if (pos) {
+                            Container.mainCanvas.ctx.lineTo(pos.x, pos.y);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

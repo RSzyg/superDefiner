@@ -20,8 +20,6 @@ export default class Main {
         board.createBoard(1, 1);
         this.dragList.push(board);
 
-        Container.zoom(-0.5);
-
         window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         window.addEventListener("touchstart", (event) => { this.dragBefore(event); });
         window.addEventListener("mousemove", (event) => {

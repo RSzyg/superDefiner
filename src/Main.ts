@@ -1,3 +1,4 @@
+import Container from "./Container";
 import * as Goods from "./Goods";
 import Map from "./Map";
 
@@ -18,6 +19,8 @@ export default class Main {
         const board: Goods.Board = new Goods.Board();
         board.createBoard(1, 1);
         this.dragList.push(board);
+
+        Container.zoom(-0.5);
 
         window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         window.addEventListener("touchstart", (event) => { this.dragBefore(event); });

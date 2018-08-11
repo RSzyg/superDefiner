@@ -1,3 +1,5 @@
+import $ = require("jquery");
+
 export default class Canvas {
     public canvas: HTMLCanvasElement;
     public ctx: CanvasRenderingContext2D;
@@ -7,6 +9,6 @@ export default class Canvas {
         this.canvas.height = height;
         this.canvas.width = width;
         this.canvas.style.zIndex = zIndex;
-        document.getElementById("display").appendChild(this.canvas);
+        $("#display").append(this.canvas);
     }
 }

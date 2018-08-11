@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/RSzyh/superDefiner#readme",
   "devDependencies": {
+    "@types/jquery": "^3.3.5",
+    "jquery": "^3.3.1",
     "ts-loader": "^4.4.2",
     "tslint": "^5.11.0",
     "tslint-loader": "^3.6.0",

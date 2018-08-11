@@ -1,10 +1,11 @@
+import $ = require("jquery");
 import Container from "./Container";
 import { start } from "./Loading";
 
-window.onload = () => {
-    document.getElementById("startBtn").onclick = () => {
-        document.getElementById("display").removeChild(document.getElementById("start"));
+$(document).ready(() => {
+   $("#startBtn").click(() => {
+        $("#start").remove();
         start();
         Container.create().render();
-    };
-};
+    });
+});

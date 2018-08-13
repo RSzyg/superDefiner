@@ -1,4 +1,5 @@
 import Camera from "./Camera";
+import Container from "./Container";
 import * as Goods from "./Goods";
 import Map from "./Map";
 import Menu from "./Menu";
@@ -20,22 +21,22 @@ export default class Main {
     public createScene() {
         this.map.createMap();
         window.addEventListener("keydown", (event) => {this.menu(event); });
-        window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
-        window.addEventListener("touchstart", (event) => { this.dragBefore(event); });
-        window.addEventListener("mousemove", (event) => {
+        Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
+        Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
+        Container.mainCanvas.canvas.addEventListener("mousemove", (event) => {
             if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
-        window.addEventListener("touchmove", (event) => {
+        Container.mainCanvas.canvas.addEventListener("touchmove", (event) => {
             if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
-        window.addEventListener("mouseup", (event) => { this.dragEnd(event); });
-        window.addEventListener("touchend", (event) => { this.dragEnd(event); });
+        Container.mainCanvas.canvas.addEventListener("mouseup", (event) => { this.dragEnd(event); });
+        Container.mainCanvas.canvas.addEventListener("touchend", (event) => { this.dragEnd(event); });
 
-        window.addEventListener("wheel", (event) => { this.zoom(event); });
+        Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
     }
 
     private dragBefore(event: any) {

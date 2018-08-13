@@ -3,6 +3,8 @@ import Canvas from "./Canvas";
 import Shape from "./Shape";
 
 export default class Container {
+    public static mainCanvas: Canvas;
+
     public static createMainMap() {
         if (Container.mainCanvas === undefined) {
             Container.mainCanvas = new Canvas(1000, 800, "1", "absolute");
@@ -129,5 +131,4 @@ export default class Container {
     }
 
     private static elements: Array<{[key: string]: any}> = [];
-    private static mainCanvas: Canvas;
 }

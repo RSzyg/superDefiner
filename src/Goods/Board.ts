@@ -3,7 +3,7 @@ import Container from "../Container";
 import Menu from "../Menu";
 import Shape from "../Shape";
 
-export default class Board extends Container {
+export default class Board {
     public static id: number;
     public uuid: string;
     public main: Shape;
@@ -11,19 +11,16 @@ export default class Board extends Container {
     public draggable: boolean;
 
     constructor() {
-        super();
         Board.id = 0;
         this.draggable = false;
         this.main = new Shape();
         this.texture = [];
-        this.addChild(this.main);
         for (let i = 0; i < 6; i++) {
             this.texture[i] = new Shape();
-            this.addChild(this.texture[i]);
         }
     }
 
-    public createBoard(x: number, y: number) {
+    public create(x: number, y: number) {
         this.main.saveRect(x * 40, y * 40, 240, 80);
         this.main.saveFill("#EE7942");
         this.uuid = "Board" + Board.id;
@@ -38,6 +35,21 @@ export default class Board extends Container {
             this.texture[i].saveStroke("black", 2);
         }
         Board.id++;
+        return this;
+    }
+
+    public addToMenu() {
+        Menu.addMenu(this.main);
+        for (let i = 0; i < 6; i++) {
+            Menu.addMenu(this.texture[i]);
+        }
+    }
+
+    public addToContainer() {
+        Container.addChild(this.main);
+        for ( let i = 0; i < 6; i++) {
+            Container.addChild(this.texture[i]);
+        }
     }
 
     public click(x: number, y: number) {

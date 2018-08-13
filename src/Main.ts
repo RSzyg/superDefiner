@@ -19,9 +19,6 @@ export default class Main {
 
     public createScene() {
         this.map.createMap();
-        const board: Goods.Board = new Goods.Board();
-        board.createBoard(1, 1);
-        this.dragList.push(board);
         window.addEventListener("keydown", (event) => {this.menu(event); });
         window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         window.addEventListener("touchstart", (event) => { this.dragBefore(event); });
@@ -76,12 +73,16 @@ export default class Main {
     }
 
     private menu(event: any) {
-        Menu.createMenuMap();
-        if (Menu.goodCanvas.canvas.style.zIndex === "0") {
-            Menu.goodCanvas.canvas.style.zIndex = "2";
-            Menu.Menurender();
-        } else {
-            Menu.goodCanvas.canvas.style.zIndex = "0";
+        if (event.code === "KeyQ") {
+            if (Menu.goodCanvas.canvas.style.display === "none") {
+                Menu.goodCanvas.canvas.style.zIndex = "2";
+                Menu.goodCanvas.canvas.style.display = "inline";
+                Menu.createGoods();
+                Menu.Menurender();
+            } else {
+                Menu.goodCanvas.canvas.style.display = "none";
+                Menu.goodCanvas.canvas.style.zIndex = "0";
+            }
         }
     }
 

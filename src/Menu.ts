@@ -6,11 +6,24 @@ import Shape from "./Shape";
 export default class Menu {
 
     public static goodCanvas: Canvas;
+    public static board: Goods.Board;
+
+    public static createGoods() {
+        Menu.board = new Goods.Board();
+        Menu.board.create(1, 1).addToMenu();
+    }
 
     public static createMenuMap() {
         if (Menu.goodCanvas === undefined) {
-            Menu.goodCanvas = new Canvas(600, 800, "0");
+            Menu.goodCanvas = new Canvas(600, 800, "0", "absolute");
+            Menu.goodCanvas.canvas.style.display = "none";
+            Menu.goodCanvas.canvas.style.backgroundColor = "#66ccff";
         }
+        return this;
+    }
+
+    public static addMenu(shp: Shape) {
+        Menu.elements.push(shp);
         return this;
     }
 
@@ -23,10 +36,10 @@ export default class Menu {
                             const pos: {[key: string]: number} = shp.position[0];
                             Menu.goodCanvas.ctx.beginPath();
                             Menu.goodCanvas.ctx.rect(
-                                pos.x * Camera.scale - Camera.x,
-                                pos.y * Camera.scale - Camera.y,
-                                shp.width * Camera.scale,
-                                shp.height * Camera.scale,
+                                pos.x,
+                                pos.y,
+                                shp.width,
+                                shp.height,
                             );
                     }
                     break;
@@ -35,9 +48,9 @@ export default class Menu {
                             const pos: {[key: string]: number} = shp.position[0];
                             Menu.goodCanvas.ctx.beginPath();
                             Menu.goodCanvas.ctx.arc(
-                                pos.x * Camera.scale  - Camera.x,
-                                pos.y * Camera.scale  - Camera.y,
-                                shp.radius * Camera.scale,
+                                pos.x,
+                                pos.y,
+                                shp.radius,
                                 0,
                                 2 * Math.PI,
                             );
@@ -48,14 +61,14 @@ export default class Menu {
                         const pos: {[key: string]: number} = shp.position.shift();
                         Menu.goodCanvas.ctx.beginPath();
                         Menu.goodCanvas.ctx.moveTo(
-                            pos.x * Camera.scale  - Camera.x,
-                            pos.y * Camera.scale  - Camera.y,
+                            pos.x,
+                            pos.y,
                         );
                         shp.position.push(pos);
                         for (const point of shp.position) {
                             Menu.goodCanvas.ctx.lineTo(
-                                point.x * Camera.scale  - Camera.x,
-                                point.y * Camera.scale  - Camera.y,
+                                point.x,
+                                point.y,
                             );
                         }
                     }
@@ -65,13 +78,13 @@ export default class Menu {
                         const pos: {[key: string]: number} = shp.position[0];
                         Menu.goodCanvas.ctx.beginPath();
                         Menu.goodCanvas.ctx.moveTo(
-                            (pos.x + shp.radius * Math.cos(shp.startAngle)) * Camera.scale - Camera.x,
-                            (pos.y + shp.radius * Math.sin(shp.startAngle)) * Camera.scale - Camera.y,
+                            pos.x + shp.radius * Math.cos(shp.startAngle),
+                            pos.y + shp.radius * Math.sin(shp.startAngle),
                         );
                         Menu.goodCanvas.ctx.arc(
-                            pos.x * Camera.scale - Camera.x,
-                            pos.y * Camera.scale - Camera.y,
-                            shp.radius * Camera.scale,
+                            pos.x,
+                            pos.y,
+                            shp.radius,
                             shp.startAngle,
                             shp.endAngle,
                         );
@@ -83,15 +96,15 @@ export default class Menu {
                         Menu.goodCanvas.ctx.beginPath();
                         if (pos) {
                             Menu.goodCanvas.ctx.moveTo(
-                                pos.x * Camera.scale  - Camera.x,
-                                pos.y * Camera.scale  - Camera.y,
+                                pos.x,
+                                pos.y,
                             );
                         }
                         pos = shp.position[1];
                         if (pos) {
                             Menu.goodCanvas.ctx.lineTo(
-                                pos.x * Camera.scale  - Camera.x,
-                                pos.y * Camera.scale  - Camera.y,
+                                pos.x,
+                                pos.y,
                             );
                         }
                     }
@@ -113,9 +126,4 @@ export default class Menu {
     }
 
     private static elements: Array<{[key: string]: any}> = [];
-
-    public addmenu(shp: Shape) {
-        Menu.elements.push(shp);
-        return this;
-    }
 }

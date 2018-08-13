@@ -4,6 +4,7 @@ import Map from "./Map";
 
 export default class Main {
     private map: Map;
+    private touched: boolean;
     private dragingGoods: any;
     private dragList: any[];
     private pointerX: number;
@@ -12,6 +13,7 @@ export default class Main {
     constructor() {
         this.map = new Map();
         this.dragList = [];
+        this.touched = false;
     }
 
     public createScene() {
@@ -23,12 +25,12 @@ export default class Main {
         window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         window.addEventListener("touchstart", (event) => { this.dragBefore(event); });
         window.addEventListener("mousemove", (event) => {
-            if (this.dragingGoods !== undefined) {
+            if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
         window.addEventListener("touchmove", (event) => {
-            if (this.dragingGoods !== undefined) {
+            if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
@@ -39,6 +41,7 @@ export default class Main {
     }
 
     private dragBefore(event: any) {
+        this.touched = true;
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         for (const goods of this.dragList) {
@@ -56,10 +59,18 @@ export default class Main {
             this.dragingGoods.y += (y - this.pointerY);
             this.pointerX = x;
             this.pointerY = y;
+        } else if (this.touched) {
+            Camera.center = {
+                x: Camera.center.x - (x - this.pointerX) / Camera.scale,
+                y: Camera.center.y - (y - this.pointerY) / Camera.scale,
+            };
+            this.pointerX = x;
+            this.pointerY = y;
         }
     }
 
     private dragEnd(event: any) {
+        this.touched = false;
         this.dragingGoods = undefined;
     }
 

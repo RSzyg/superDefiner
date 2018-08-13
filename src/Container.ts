@@ -2,7 +2,7 @@ import Canvas from "./Canvas";
 import Shape from "./Shape";
 
 export default class Container {
-    public static scale: number  = 1;
+    public static scale: number  = 0.5;
     public static cameraX: number = 0;
     public static cameraY: number = 0;
 

@@ -99,16 +99,15 @@ export default class Main {
             this.pointerX = x;
             this.pointerY = y;
         } else if (this.touched) {
-            Camera.center = {
-                x: Camera.center.x - (x - this.pointerX) / Camera.scale,
-                y: Camera.center.y - (y - this.pointerY) / Camera.scale,
-            };
+            Camera.centerX -= (x - this.pointerX) / Camera.scale;
+            Camera.centerY -= (y - this.pointerY) / Camera.scale;
             this.pointerX = x;
             this.pointerY = y;
         }
     }
 
     private dragEnd(event: any) {
+        Camera.checkRange();
         this.touched = false;
         this.dragingGoods = undefined;
     }
@@ -137,5 +136,6 @@ export default class Main {
         } else if (event.deltaY < 0) {
             Camera.zoom(0.1);
         }
+        Camera.checkRange();
     }
 }

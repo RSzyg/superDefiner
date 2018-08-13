@@ -13,23 +13,45 @@ export default class Camera {
             Camera.scale += scaleChange;
             Camera.scale = +Camera.scale.toFixed(2);
         }
-        Camera.x = (Camera.scale * Camera.centerX) - Container.canvasWidth / 2;
-        Camera.y = (Camera.scale * Camera.centerY) - Container.canvasHeight / 2;
+        Camera.x = (Camera.scale * Camera.centerPointX) - Container.canvasWidth / 2;
+        Camera.y = (Camera.scale * Camera.centerPointY) - Container.canvasHeight / 2;
     }
 
-    public static get center(): {[key: string]: number} {
-        return { x: Camera.centerX, y: Camera.centerY };
+    public static checkRange() {
+        if (Camera.x < 0) {
+            Camera.centerX = (Container.canvasWidth / 2) / Camera.scale;
+        }
+        if (Camera.y < 0) {
+            Camera.centerY = (Container.canvasHeight / 2) / Camera.scale;
+        }
+        if (Camera.x + Container.canvasWidth > 2000 * Camera.scale) {
+            Camera.centerX = 2000 - (Container.canvasWidth / 2) / Camera.scale;
+        }
+        if (Camera.y + Container.canvasHeight > 1600 * Camera.scale) {
+            Camera.centerY = 1600 - (Container.canvasHeight / 2) / Camera.scale;
+        }
     }
 
-    public static set center(center: {[key: string]: number}) {
-        Camera.centerX = center.x;
-        Camera.centerY = center.y;
-        Camera.x = (Camera.scale * Camera.centerX) - Container.canvasWidth / 2;
-        Camera.y = (Camera.scale * Camera.centerY) - Container.canvasHeight / 2;
+    public static get centerX(): number {
+        return Camera.centerPointX;
+    }
+
+    public static set centerX(centerX: number) {
+        Camera.centerPointX = centerX;
+        Camera.x = (Camera.scale * Camera.centerPointX) - Container.canvasWidth / 2;
+    }
+
+    public static get centerY(): number {
+        return Camera.centerPointY;
+    }
+
+    public static set centerY(centerY: number) {
+        Camera.centerPointY = centerY;
+        Camera.y = (Camera.scale * Camera.centerPointY) - Container.canvasHeight / 2;
     }
 
     private static scaleUpperLimit = 2.05;
     private static scaleLowerLimit = 0.45;
-    private static centerX: number = 1000;
-    private static centerY: number = 800;
+    private static centerPointX: number = 1000;
+    private static centerPointY: number = 800;
 }

@@ -9,8 +9,10 @@ export default class Menu {
     public static board: Goods.Board;
 
     public static createGoods() {
-        Menu.board = new Goods.Board();
-        Menu.board.create(1, 1).addToMenu();
+        if (Menu.board === undefined ) {
+            Menu.board = new Goods.Board();
+            Menu.board.create(1, 1).addToMenu();
+        }
     }
 
     public static createMenuMap() {

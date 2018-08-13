@@ -8,6 +8,7 @@ $(document).ready(() => {
         $("#start").remove();
         Container.createMainMap().render();
         Menu.createMenuMap();
+        Menu.createGoods();
         start();
     });
 });

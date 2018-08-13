@@ -69,15 +69,32 @@ export default class Board {
         return false;
     }
 
+    public menuclick(x: number, y: number) {
+        if (
+            x < this.main.position[0].x + this.main.width &&
+            x > this.main.position[0].x
+        ) {
+            if (
+                y < this.main.position[0].y + this.main.height &&
+                y > this.main.position[0].y
+            ) {
+                if (this.draggable) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     get x(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].x * Camera.scale - Camera.x;
+            return this.main.position[0].x;
         }
     }
 
     set x(x: number) {
-        const disx = (x - this.x) / Camera.scale;
-        this.main.position[0].x = (x + Camera.x) / Camera.scale;
+        const disx = (x - this.x);
+        this.main.position[0].x = x;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].x += disx;
         }
@@ -85,13 +102,13 @@ export default class Board {
 
     get y(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].y * Camera.scale - Camera.y;
+            return this.main.position[0].y;
         }
     }
 
     set y(y: number) {
-        const disy = (y - this.y) / Camera.scale;
-        this.main.position[0].y = (y + Camera.y) / Camera.scale;
+        const disy = (y - this.y);
+        this.main.position[0].y = y;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].y += disy;
         }

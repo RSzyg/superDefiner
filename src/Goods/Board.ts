@@ -1,3 +1,4 @@
+import Camera from "../Camera";
 import Container from "../Container";
 import Shape from "../Shape";
 
@@ -40,12 +41,12 @@ export default class Board extends Container {
 
     public click(x: number, y: number) {
         if (
-            x < (this.main.position[0].x + this.main.width) * Container.scale - Container.cameraX &&
-            x > this.main.position[0].x * Container.scale - Container.cameraX
+            x < (this.main.position[0].x + this.main.width) * Camera.scale - Camera.x &&
+            x > this.main.position[0].x * Camera.scale - Camera.x
         ) {
             if (
-                y < (this.main.position[0].y + this.main.height) * Container.scale - Container.cameraY &&
-                y > this.main.position[0].y * Container.scale - Container.cameraY
+                y < (this.main.position[0].y + this.main.height) * Camera.scale - Camera.y &&
+                y > this.main.position[0].y * Camera.scale - Camera.y
             ) {
                 if (this.draggable) {
                     return true;
@@ -57,13 +58,13 @@ export default class Board extends Container {
 
     get x(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].x * Container.scale - Container.cameraX;
+            return this.main.position[0].x * Camera.scale - Camera.x;
         }
     }
 
     set x(x: number) {
-        const disx = (x - this.x) / Container.scale;
-        this.main.position[0].x = (x + Container.cameraX) / Container.scale;
+        const disx = (x - this.x) / Camera.scale;
+        this.main.position[0].x = (x + Camera.x) / Camera.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].x += disx;
         }
@@ -71,13 +72,13 @@ export default class Board extends Container {
 
     get y(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].y * Container.scale - Container.cameraY;
+            return this.main.position[0].y * Camera.scale - Camera.y;
         }
     }
 
     set y(y: number) {
-        const disy = (y - this.y) / Container.scale;
-        this.main.position[0].y = (y + Container.cameraY) / Container.scale;
+        const disy = (y - this.y) / Camera.scale;
+        this.main.position[0].y = (y + Camera.y) / Camera.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].y += disy;
         }

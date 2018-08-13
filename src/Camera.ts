@@ -11,6 +11,7 @@ export default class Camera {
             Camera.scale + scaleChange < Camera.scaleUpperLimit
         ) {
             Camera.scale += scaleChange;
+            Camera.scale = +Camera.scale.toFixed(2);
         }
         Camera.x = (Camera.scale * Camera.centerX) - Container.canvasWidth / 2;
         Camera.y = (Camera.scale * Camera.centerY) - Container.canvasHeight / 2;

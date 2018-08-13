@@ -88,9 +88,9 @@ export default class Main {
 
     private zoom(event: MouseWheelEvent) {
         if (event.deltaY > 0) {
-            Camera.zoom(-0.05);
+            Camera.zoom(-0.1);
         } else if (event.deltaY < 0) {
-            Camera.zoom(0.05);
+            Camera.zoom(0.1);
         }
     }
 }

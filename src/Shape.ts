@@ -23,7 +23,6 @@ export default class Shape {
         this.position = [{ x, y }];
         this.width = width;
         this.height = height;
-        Shape.id ++;
         return this;
     }
 
@@ -32,7 +31,6 @@ export default class Shape {
         this.uuid = this.type + Shape.id;
         this.position = [{ x, y }];
         this.radius = radius;
-        Shape.id ++;
         return this;
     }
 
@@ -43,7 +41,6 @@ export default class Shape {
         this.radius = radius;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
-        Shape.id ++;
         return this;
     }
 
@@ -51,7 +48,6 @@ export default class Shape {
         this.type = "triangle";
         this.uuid = this.type + Shape.id;
         this.position = [p1, p2, p3];
-        Shape.id ++;
         return this;
     }
 
@@ -59,7 +55,6 @@ export default class Shape {
         this.type = "line";
         this.uuid = this.type + Shape.id;
         this.position = [p1, p2];
-        Shape.id ++;
         return this;
     }
 
@@ -72,5 +67,9 @@ export default class Shape {
         this.strokeStyle = strokeStyle;
         this.lineWidth = lineWidth;
         return this;
+    }
+
+    get id() {
+        return Shape.id++;
     }
 }

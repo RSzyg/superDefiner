@@ -3,9 +3,9 @@ import Canvas from "./Canvas";
 import Shape from "./Shape";
 
 export default class Container {
-    public static create() {
+    public static createMainMap() {
         if (Container.mainCanvas === undefined) {
-            Container.mainCanvas = new Canvas(1000, 800, "1");
+            Container.mainCanvas = new Canvas(1000, 800, "1", "absolute");
         }
         return this;
     }
@@ -115,6 +115,11 @@ export default class Container {
         requestAnimationFrame(() => Container.render());
     }
 
+    public static addChild(shp: Shape) {
+        Container.elements.push(shp);
+        return this;
+    }
+
     public static get canvasWidth() {
         return Container.mainCanvas.canvas.width;
     }
@@ -125,9 +130,4 @@ export default class Container {
 
     private static elements: Array<{[key: string]: any}> = [];
     private static mainCanvas: Canvas;
-
-    public addChild(shp: Shape) {
-        Container.elements.push(shp);
-        return this;
-    }
 }

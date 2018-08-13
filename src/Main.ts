@@ -1,4 +1,4 @@
-import Container from "./Container";
+import Camera from "./Camera";
 import * as Goods from "./Goods";
 import Map from "./Map";
 
@@ -65,9 +65,9 @@ export default class Main {
 
     private zoom(event: MouseWheelEvent) {
         if (event.deltaY > 0) {
-            Container.zoom(-0.05);
+            Camera.zoom(-0.05);
         } else if (event.deltaY < 0) {
-            Container.zoom(0.05);
+            Camera.zoom(0.05);
         }
     }
 }

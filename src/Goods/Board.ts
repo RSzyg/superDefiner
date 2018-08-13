@@ -1,7 +1,7 @@
-import Container from "./Container";
-import Shape from "./Shape";
+import Container from "../Container";
+import Shape from "../Shape";
 
-export class Board extends Container {
+export default class Board extends Container {
     public static id: number;
     public uuid: string;
     public main: Shape;

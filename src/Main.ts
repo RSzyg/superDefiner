@@ -39,8 +39,8 @@ export default class Main {
     }
 
     private dragBefore(event: any) {
-        this.pointerX = event.type === "mousedown" ? event.clientX : event.touches[0].clientX;
-        this.pointerY = event.type === "mousedown" ? event.clientY : event.touches[0].clientY;
+        this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
+        this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         for (const goods of this.dragList) {
             if (goods.click(this.pointerX, this.pointerY)) {
                 this.dragingGoods = goods;
@@ -49,8 +49,8 @@ export default class Main {
     }
 
     private dragMove(event: any) {
-        const x: number = event.type === "mousemove" ? event.clientX : event.touches[0].clientX;
-        const y: number = event.type === "mousemove" ? event.clientY : event.touches[0].clientY;
+        const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
+        const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
         if (this.dragingGoods !== undefined) {
             this.dragingGoods.x += (x - this.pointerX);
             this.dragingGoods.y += (y - this.pointerY);

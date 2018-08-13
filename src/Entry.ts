@@ -5,7 +5,7 @@ import { start } from "./Loading";
 $(document).ready(() => {
    $("#startBtn").click(() => {
         $("#start").remove();
-        Container.create().render();
+        Container.createMainMap().render();
         start();
     });
 });

@@ -1,42 +1,40 @@
 import Camera from "./Camera";
 import Canvas from "./Canvas";
+import * as Goods from "./Goods";
 import Shape from "./Shape";
 
-export default class Container {
-    public static createMainMap() {
-        if (Container.mainCanvas === undefined) {
-            Container.mainCanvas = new Canvas(1000, 800, "1");
+export default class Menu {
+
+    public static goodCanvas: Canvas;
+
+    public static createMenuMap() {
+        if (Menu.goodCanvas === undefined) {
+            Menu.goodCanvas = new Canvas(600, 800, "0");
         }
         return this;
     }
 
-    public static render() {
-        Container.mainCanvas.canvas.height = Container.mainCanvas.canvas.height;
-        for (const shp of Container.elements) {
+    public static Menurender() {
+        Menu.goodCanvas.canvas.height = Menu.goodCanvas.canvas.height;
+        for (const shp of Menu.elements) {
             switch (shp.type) {
                 case "rect":
                     if (shp.position !== undefined) {
-                        // if ((shp.position[0].x + shp.width * Camera.scale > -Camera.x &&
-                        //     shp.position[0].y + shp.height * Camera.scale > -Camera.y) ||
-                        //     (shp.position[0].x < -Camera.x + Container.mainCanvas.canvas.width &&
-                        //     shp.position[0].y > -Camera.y + Container.mainCanvas.canvas.height)
-                        // ) {
                             const pos: {[key: string]: number} = shp.position[0];
-                            Container.mainCanvas.ctx.beginPath();
-                            Container.mainCanvas.ctx.rect(
+                            Menu.goodCanvas.ctx.beginPath();
+                            Menu.goodCanvas.ctx.rect(
                                 pos.x * Camera.scale - Camera.x,
                                 pos.y * Camera.scale - Camera.y,
                                 shp.width * Camera.scale,
                                 shp.height * Camera.scale,
                             );
-                        // }
                     }
                     break;
                 case "circle":
                     if (shp.position !== undefined) {
                             const pos: {[key: string]: number} = shp.position[0];
-                            Container.mainCanvas.ctx.beginPath();
-                            Container.mainCanvas.ctx.arc(
+                            Menu.goodCanvas.ctx.beginPath();
+                            Menu.goodCanvas.ctx.arc(
                                 pos.x * Camera.scale  - Camera.x,
                                 pos.y * Camera.scale  - Camera.y,
                                 shp.radius * Camera.scale,
@@ -48,14 +46,14 @@ export default class Container {
                 case "triangle":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position.shift();
-                        Container.mainCanvas.ctx.beginPath();
-                        Container.mainCanvas.ctx.moveTo(
+                        Menu.goodCanvas.ctx.beginPath();
+                        Menu.goodCanvas.ctx.moveTo(
                             pos.x * Camera.scale  - Camera.x,
                             pos.y * Camera.scale  - Camera.y,
                         );
                         shp.position.push(pos);
                         for (const point of shp.position) {
-                            Container.mainCanvas.ctx.lineTo(
+                            Menu.goodCanvas.ctx.lineTo(
                                 point.x * Camera.scale  - Camera.x,
                                 point.y * Camera.scale  - Camera.y,
                             );
@@ -65,12 +63,12 @@ export default class Container {
                 case "arc":
                     if (shp.position !== undefined) {
                         const pos: {[key: string]: number} = shp.position[0];
-                        Container.mainCanvas.ctx.beginPath();
-                        Container.mainCanvas.ctx.moveTo(
+                        Menu.goodCanvas.ctx.beginPath();
+                        Menu.goodCanvas.ctx.moveTo(
                             (pos.x + shp.radius * Math.cos(shp.startAngle)) * Camera.scale - Camera.x,
                             (pos.y + shp.radius * Math.sin(shp.startAngle)) * Camera.scale - Camera.y,
                         );
-                        Container.mainCanvas.ctx.arc(
+                        Menu.goodCanvas.ctx.arc(
                             pos.x * Camera.scale - Camera.x,
                             pos.y * Camera.scale - Camera.y,
                             shp.radius * Camera.scale,
@@ -82,16 +80,16 @@ export default class Container {
                 case "line":
                     if (shp.position !== undefined) {
                         let pos: {[key: string]: number} = shp.position[0];
-                        Container.mainCanvas.ctx.beginPath();
+                        Menu.goodCanvas.ctx.beginPath();
                         if (pos) {
-                            Container.mainCanvas.ctx.moveTo(
+                            Menu.goodCanvas.ctx.moveTo(
                                 pos.x * Camera.scale  - Camera.x,
                                 pos.y * Camera.scale  - Camera.y,
                             );
                         }
                         pos = shp.position[1];
                         if (pos) {
-                            Container.mainCanvas.ctx.lineTo(
+                            Menu.goodCanvas.ctx.lineTo(
                                 pos.x * Camera.scale  - Camera.x,
                                 pos.y * Camera.scale  - Camera.y,
                             );
@@ -102,32 +100,22 @@ export default class Container {
                     break;
             }
             if (shp.fillStyle !== undefined) {
-                Container.mainCanvas.ctx.fillStyle = shp.fillStyle;
-                Container.mainCanvas.ctx.fill();
+                Menu.goodCanvas.ctx.fillStyle = shp.fillStyle;
+                Menu.goodCanvas.ctx.fill();
             }
             if (shp.strokeStyle !== undefined) {
-                Container.mainCanvas.ctx.strokeStyle = shp.strokeStyle;
-                Container.mainCanvas.ctx.stroke();
+                Menu.goodCanvas.ctx.strokeStyle = shp.strokeStyle;
+                Menu.goodCanvas.ctx.stroke();
             }
-            Container.mainCanvas.ctx.closePath();
+            Menu.goodCanvas.ctx.closePath();
         }
-
-        requestAnimationFrame(() => Container.render());
-    }
-
-    public static get canvasWidth() {
-        return Container.mainCanvas.canvas.width;
-    }
-
-    public static get canvasHeight() {
-        return Container.mainCanvas.canvas.height;
+        requestAnimationFrame(() => Menu.Menurender());
     }
 
     private static elements: Array<{[key: string]: any}> = [];
-    private static mainCanvas: Canvas;
 
-    public addChild(shp: Shape) {
-        Container.elements.push(shp);
+    public addmenu(shp: Shape) {
+        Menu.elements.push(shp);
         return this;
     }
 }

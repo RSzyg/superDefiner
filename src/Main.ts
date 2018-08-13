@@ -1,6 +1,7 @@
 import Camera from "./Camera";
 import * as Goods from "./Goods";
 import Map from "./Map";
+import Menu from "./Menu";
 
 export default class Main {
     private map: Map;
@@ -19,7 +20,7 @@ export default class Main {
         const board: Goods.Board = new Goods.Board();
         board.createBoard(1, 1);
         this.dragList.push(board);
-
+        window.addEventListener("keydown", (event) => {this.menu(event); });
         window.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         window.addEventListener("touchstart", (event) => { this.dragBefore(event); });
         window.addEventListener("mousemove", (event) => {
@@ -61,6 +62,16 @@ export default class Main {
 
     private dragEnd(event: any) {
         this.dragingGoods = undefined;
+    }
+
+    private menu(event: any) {
+        Menu.createMenuMap();
+        if (Menu.goodCanvas.canvas.style.zIndex === "0") {
+            Menu.goodCanvas.canvas.style.zIndex = "2";
+            Menu.Menurender();
+        } else {
+            Menu.goodCanvas.canvas.style.zIndex = "0";
+        }
     }
 
     private zoom(event: MouseWheelEvent) {

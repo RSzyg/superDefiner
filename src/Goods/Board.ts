@@ -1,5 +1,6 @@
 import Camera from "../Camera";
 import Container from "../Container";
+import Menu from "../Menu";
 import Shape from "../Shape";
 
 export default class Board extends Container {

@@ -65,7 +65,7 @@ export default class Main {
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         Menu.goodCanvas.canvas.style.display = "none";
         const board = new Goods.Board();
-        board.create((event.pageX - Camera.x) / Camera.scale / 40, (event.pageY - Camera.y) / Camera.scale / 40);
+        board.create((event.pageX + Camera.x) / Camera.scale / 40, (event.pageY + Camera.y) / Camera.scale / 40);
         board.addToContainer();
         this.dragList.push(board);
         this.dragingGoods = board;

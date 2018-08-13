@@ -14,7 +14,7 @@ export default class Container {
     }
 
     public static zoom(scaleChange: number) {
-        if (Container.scale + scaleChange > 0.5 && Container.scale + scaleChange < 2) {
+        if (Container.scale + scaleChange > 0.45 && Container.scale + scaleChange < 2.05) {
             Container.scale += scaleChange;
         }
         const height = Container.mainCanvas.canvas.height;

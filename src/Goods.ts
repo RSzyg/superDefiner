@@ -40,11 +40,11 @@ export class Board extends Container {
 
     public click(x: number, y: number) {
         if (
-            x < (this.main.position[0].x + 240) * Container.scale - Container.cameraX &&
-            x > this.main.position[0].x - Container.cameraX
+            x < (this.main.position[0].x + this.main.width) * Container.scale - Container.cameraX &&
+            x > this.main.position[0].x * Container.scale - Container.cameraX
         ) {
             if (
-                y < (this.main.position[0].y + 80) * Container.scale - Container.cameraY &&
+                y < (this.main.position[0].y + this.main.height) * Container.scale - Container.cameraY &&
                 y > this.main.position[0].y * Container.scale - Container.cameraY
             ) {
                 if (this.draggable) {
@@ -57,13 +57,13 @@ export class Board extends Container {
 
     get x(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].x;
+            return this.main.position[0].x * Container.scale - Container.cameraX;
         }
     }
 
     set x(x: number) {
-        const disx = x - this.main.position[0].x;
-        this.main.position[0].x = x;
+        const disx = (x - this.x) / Container.scale;
+        this.main.position[0].x = (x + Container.cameraX) / Container.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].x += disx;
         }
@@ -71,13 +71,13 @@ export class Board extends Container {
 
     get y(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].y;
+            return this.main.position[0].y * Container.scale - Container.cameraY;
         }
     }
 
     set y(y: number) {
-        const disy = y - this.main.position[0].y;
-        this.main.position[0].y = y;
+        const disy = (y - this.y) / Container.scale;
+        this.main.position[0].y = (y + Container.cameraY) / Container.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].y += disy;
         }

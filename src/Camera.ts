@@ -1,4 +1,5 @@
 import Container from "./Container";
+import Map from "./Map";
 
 export default class Camera {
     public static scale: number  = 1;
@@ -24,11 +25,11 @@ export default class Camera {
         if (Camera.y < 0) {
             Camera.centerY = (Container.canvasHeight / 2) / Camera.scale;
         }
-        if (Camera.x + Container.canvasWidth > 2000 * Camera.scale) {
-            Camera.centerX = 2000 - (Container.canvasWidth / 2) / Camera.scale;
+        if (Camera.x + Container.canvasWidth > Map.width * Camera.scale) {
+            Camera.centerX = Map.width - (Container.canvasWidth / 2) / Camera.scale;
         }
-        if (Camera.y + Container.canvasHeight > 1600 * Camera.scale) {
-            Camera.centerY = 1600 - (Container.canvasHeight / 2) / Camera.scale;
+        if (Camera.y + Container.canvasHeight > Map.height * Camera.scale) {
+            Camera.centerY = Map.height - (Container.canvasHeight / 2) / Camera.scale;
         }
     }
 

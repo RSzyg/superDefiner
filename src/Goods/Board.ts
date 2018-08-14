@@ -1,5 +1,6 @@
 import Camera from "../Camera";
 import Container from "../Container";
+import Map from "../Map";
 import Menu from "../Menu";
 import Shape from "../Shape";
 
@@ -21,16 +22,16 @@ export default class Board {
     }
 
     public create(x: number, y: number) {
-        this.main.saveRect(x * 40, y * 40, 240, 80);
+        this.main.saveRect(x * Map.blockWidth, y * Map.blockHeight, 6 * Map.blockWidth, 2 * Map.blockHeight);
         this.main.saveFill("#EE7942");
         this.uuid = "Board" + Board.id;
         this.draggable = true;
-        this.texture[0].saveArc(x * 40 + 180, y * 40 - 140, 150, 1.22, 1.93);
-        this.texture[1].saveArc(x * 40 + 180, y * 40 - 130, 150, 1.16, 2.08);
-        this.texture[2].saveArc(x * 40 + 180, y * 40 - 120, 150, 1.16, 2.21);
-        this.texture[3].saveArc(x * 40 + 60, y * 40 + 200, 150, 10.59, 11.64);
-        this.texture[4].saveArc(x * 40 + 60, y * 40 + 210, 150, 10.59, 11.51);
-        this.texture[5].saveArc(x * 40 + 60, y * 40 + 220, 150, 10.63, 11.36);
+        this.texture[0].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 140, 150, 1.22, 1.93);
+        this.texture[1].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 130, 150, 1.16, 2.08);
+        this.texture[2].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 120, 150, 1.16, 2.21);
+        this.texture[3].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 200, 150, 10.59, 11.64);
+        this.texture[4].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 210, 150, 10.59, 11.51);
+        this.texture[5].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 220, 150, 10.63, 11.36);
         for (let i = 0; i < 6; i++) {
             this.texture[i].saveStroke("black", 2);
         }

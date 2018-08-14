@@ -22,7 +22,7 @@ export default class Main {
 
     public createScene() {
         this.map.createMap();
-        window.addEventListener("keydown", (event) => { this.menu(event); });
+        window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
@@ -41,6 +41,16 @@ export default class Main {
         Container.mainCanvas.canvas.addEventListener("touchend", (event) => { this.dragEnd(event); });
 
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
+    }
+
+    private keyboardController(event: KeyboardEvent) {
+        switch (event.code) {
+            case "KeyQ":
+                this.menuController();
+                break;
+            default:
+                break;
+        }
     }
 
     private dragBefore(event: any) {
@@ -93,17 +103,15 @@ export default class Main {
         this.dragingGoods = undefined;
     }
 
-    private menu(event: any) {
-        if (event.code === "KeyQ") {
-            if (Menu.goodsCanvas.canvas.style.display === "none") {
-                Menu.goodsCanvas.canvas.style.zIndex = "2";
-                Menu.goodsCanvas.canvas.style.display = "inline";
-                Menu.render();
-                this.addToGoods(Menu.board);
-            } else {
-                Menu.goodsCanvas.canvas.style.display = "none";
-                Menu.goodsCanvas.canvas.style.zIndex = "0";
-            }
+    private menuController() {
+        if (Menu.goodsCanvas.canvas.style.display === "none") {
+            Menu.goodsCanvas.canvas.style.zIndex = "2";
+            Menu.goodsCanvas.canvas.style.display = "inline";
+            Menu.render();
+            this.addToGoods(Menu.board);
+        } else {
+            Menu.goodsCanvas.canvas.style.display = "none";
+            Menu.goodsCanvas.canvas.style.zIndex = "0";
         }
     }
 

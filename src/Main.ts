@@ -3,8 +3,10 @@ import Container from "./Container";
 import * as Goods from "./Goods";
 import Map from "./Map";
 import Menu from "./Menu";
+import Role from "./Role";
 
 export default class Main {
+    public role1: Role;
     private map: Map;
     private touched: boolean;
     private dragingGoods: any;
@@ -14,6 +16,7 @@ export default class Main {
     private pointerY: number;
 
     constructor() {
+        this.role1 = new Role();
         this.map = new Map();
         this.dragList = [];
         this.touched = false;
@@ -22,8 +25,9 @@ export default class Main {
 
     public createScene() {
         this.map.createMap();
-        window.addEventListener("keydown", (event) => {this.menu(event); });
-        Menu.goodCanvas.canvas.addEventListener("mousedown", (event) => {this.draggoodBefore(event); });
+        this.role1.create(3, 28);
+        window.addEventListener("keydown", (event) => { this.keyboardController(event); });
+        Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousemove", (event) => {
@@ -31,21 +35,55 @@ export default class Main {
                 this.dragMove(event);
             }
         });
-        // Menu.goodCanvas.canvas.addEventListener("mousemove", (event) => {
-        //     if (this.dragingGoods !== undefined || this.touched) {
-        //         this.draggoodMove(event);
-        //     }
-        // });
         Container.mainCanvas.canvas.addEventListener("touchmove", (event) => {
             if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
         Container.mainCanvas.canvas.addEventListener("mouseup", (event) => { this.dragEnd(event); });
-        Menu.goodCanvas.canvas.addEventListener("mouseup", (event) => {this.dragEnd(event); });
+        Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {this.dragEnd(event); });
         Container.mainCanvas.canvas.addEventListener("touchend", (event) => { this.dragEnd(event); });
 
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
+    }
+
+    private keyboardController(event: KeyboardEvent) {
+        switch (event.code) {
+            case "KeyQ":
+                this.menuController();
+                break;
+            case "keyA":
+                this.RoleMoveLeft();
+                break;
+            case "keyW":
+                this.RoleMoveUp();
+                break;
+            case "keyD":
+                this.RoleMoveRight();
+                break;
+            case "keyS":
+                this.RoleMoveDown();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private RoleMoveLeft() {
+        this.role1.x -= 10 / Camera.scale;
+        console.log(this.role1.x);
+    }
+
+    private RoleMoveRight() {
+        this.role1.x += 10 / Camera.scale;
+    }
+
+    private RoleMoveUp() {
+        this.role1.y -= 10 / Camera.scale;
+    }
+
+    private RoleMoveDown() {
+        this.role1.y += 10 / Camera.scale;
     }
 
     private dragBefore(event: any) {
@@ -53,20 +91,18 @@ export default class Main {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         for (const goods of this.dragList) {
-            if (goods.click(this.pointerX, this.pointerY)) {
+            if (goods.clickInMap(this.pointerX, this.pointerY)) {
                 this.dragingGoods = goods;
                 return;
             }
         }
     }
 
-    private draggoodBefore(event: any) {
+    private dragGoodsBefore(event: any) {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        if (this.pointerX < Map.blockWidth + 6 * Map.blockWidth && this.pointerX > Map.blockWidth &&
-            this.pointerY > Map.blockHeight && this.pointerY < Map.blockHeight + 2 * Map.blockHeight
-            ) {
-            Menu.goodCanvas.canvas.style.display = "none";
+        if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
+            Menu.goodsCanvas.canvas.style.display = "none";
             const board = new Goods.Board();
             board.create(
                 (event.pageX + Camera.x) / Camera.scale / Map.blockWidth,
@@ -76,33 +112,15 @@ export default class Main {
             this.dragList.push(board);
             this.dragingGoods = board;
         }
-        // this.touched = true;
-        // this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
-        // this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        // for (const good of this.goodsList) {
-        //     if (good.menuclick(this.pointerX, this.pointerY)) {
-        //         this.dragingGoods = good;
-        //     }
-        // }
-        // this.goodsList.shift();
     }
 
-    // private draggoodMove(event: any) {
-    //     const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
-    //     const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
-    //     if (this.dragingGoods !== undefined) {
-    //         this.dragingGoods.x += (x - this.pointerX);
-    //         this.dragingGoods.y += (y - this.pointerY);
-    //         this.pointerX = x;
-    //         this.pointerY = y;
-    //     }
-    // }
     private dragMove(event: any) {
         const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
         const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
         if (this.dragingGoods !== undefined) {
             this.dragingGoods.x += (x - this.pointerX) / Camera.scale;
             this.dragingGoods.y += (y - this.pointerY) / Camera.scale;
+
             this.pointerX = x;
             this.pointerY = y;
         } else if (this.touched) {
@@ -114,27 +132,29 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
+        if (this.dragingGoods) {
+            this.dragingGoods.x = +(this.dragingGoods.x / 40).toFixed(0) * 40;
+            this.dragingGoods.y = +(this.dragingGoods.y / 40).toFixed(0) * 40;
+        }
         Camera.checkRange();
         this.touched = false;
         this.dragingGoods = undefined;
     }
 
-    private menu(event: any) {
-        if (event.code === "KeyQ") {
-            if (Menu.goodCanvas.canvas.style.display === "none") {
-                Menu.goodCanvas.canvas.style.zIndex = "2";
-                Menu.goodCanvas.canvas.style.display = "inline";
-                Menu.Menurender();
-                this.addin();
-            } else {
-                Menu.goodCanvas.canvas.style.display = "none";
-                Menu.goodCanvas.canvas.style.zIndex = "0";
-            }
+    private menuController() {
+        if (Menu.goodsCanvas.canvas.style.display === "none") {
+            Menu.goodsCanvas.canvas.style.zIndex = "2";
+            Menu.goodsCanvas.canvas.style.display = "inline";
+            Menu.render();
+            this.addToGoods(Menu.board);
+        } else {
+            Menu.goodsCanvas.canvas.style.display = "none";
+            Menu.goodsCanvas.canvas.style.zIndex = "0";
         }
     }
 
-    private addin() {
-        this.goodsList.push(Menu.board);
+    private addToGoods(goods: any) {
+        this.goodsList.push(goods);
     }
 
     private zoom(event: MouseWheelEvent) {

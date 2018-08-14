@@ -40,9 +40,9 @@ export default class Board {
     }
 
     public addToMenu() {
-        Menu.addMenu(this.main);
+        Menu.addChild(this.main);
         for (let i = 0; i < 6; i++) {
-            Menu.addMenu(this.texture[i]);
+            Menu.addChild(this.texture[i]);
         }
     }
 
@@ -53,7 +53,7 @@ export default class Board {
         }
     }
 
-    public click(x: number, y: number) {
+    public clickInMap(x: number, y: number) {
         if (
             x < (this.main.position[0].x + this.main.width) * Camera.scale - Camera.x &&
             x > this.main.position[0].x * Camera.scale - Camera.x
@@ -70,7 +70,7 @@ export default class Board {
         return false;
     }
 
-    public menuclick(x: number, y: number) {
+    public clickInMenu(x: number, y: number) {
         if (
             x < this.main.position[0].x + this.main.width &&
             x > this.main.position[0].x

@@ -25,6 +25,11 @@ export default class Menu {
         return this;
     }
 
+    public static removeChild(id: string) {
+        delete Menu.elements[id];
+        return this;
+    }
+
     public static render() {
         Menu.goodsCanvas.canvas.height = Menu.goodsCanvas.canvas.height;
         for (const id in Menu.elements) {

@@ -22,8 +22,8 @@ export default class Main {
 
     public createScene() {
         this.map.createMap();
-        window.addEventListener("keydown", (event) => {this.menu(event); });
-        Menu.goodCanvas.canvas.addEventListener("mousedown", (event) => {this.draggoodBefore(event); });
+        window.addEventListener("keydown", (event) => { this.menu(event); });
+        Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousemove", (event) => {
@@ -31,18 +31,13 @@ export default class Main {
                 this.dragMove(event);
             }
         });
-        // Menu.goodCanvas.canvas.addEventListener("mousemove", (event) => {
-        //     if (this.dragingGoods !== undefined || this.touched) {
-        //         this.draggoodMove(event);
-        //     }
-        // });
         Container.mainCanvas.canvas.addEventListener("touchmove", (event) => {
             if (this.dragingGoods !== undefined || this.touched) {
                 this.dragMove(event);
             }
         });
         Container.mainCanvas.canvas.addEventListener("mouseup", (event) => { this.dragEnd(event); });
-        Menu.goodCanvas.canvas.addEventListener("mouseup", (event) => {this.dragEnd(event); });
+        Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {this.dragEnd(event); });
         Container.mainCanvas.canvas.addEventListener("touchend", (event) => { this.dragEnd(event); });
 
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
@@ -53,20 +48,18 @@ export default class Main {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         for (const goods of this.dragList) {
-            if (goods.click(this.pointerX, this.pointerY)) {
+            if (goods.clickInMap(this.pointerX, this.pointerY)) {
                 this.dragingGoods = goods;
                 return;
             }
         }
     }
 
-    private draggoodBefore(event: any) {
+    private dragGoodsBefore(event: any) {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        if (this.pointerX < Map.blockWidth + 6 * Map.blockWidth && this.pointerX > Map.blockWidth &&
-            this.pointerY > Map.blockHeight && this.pointerY < Map.blockHeight + 2 * Map.blockHeight
-            ) {
-            Menu.goodCanvas.canvas.style.display = "none";
+        if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
+            Menu.goodsCanvas.canvas.style.display = "none";
             const board = new Goods.Board();
             board.create(
                 (event.pageX + Camera.x) / Camera.scale / Map.blockWidth,
@@ -76,27 +69,8 @@ export default class Main {
             this.dragList.push(board);
             this.dragingGoods = board;
         }
-        // this.touched = true;
-        // this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
-        // this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        // for (const good of this.goodsList) {
-        //     if (good.menuclick(this.pointerX, this.pointerY)) {
-        //         this.dragingGoods = good;
-        //     }
-        // }
-        // this.goodsList.shift();
     }
 
-    // private draggoodMove(event: any) {
-    //     const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
-    //     const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
-    //     if (this.dragingGoods !== undefined) {
-    //         this.dragingGoods.x += (x - this.pointerX);
-    //         this.dragingGoods.y += (y - this.pointerY);
-    //         this.pointerX = x;
-    //         this.pointerY = y;
-    //     }
-    // }
     private dragMove(event: any) {
         const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
         const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
@@ -121,20 +95,20 @@ export default class Main {
 
     private menu(event: any) {
         if (event.code === "KeyQ") {
-            if (Menu.goodCanvas.canvas.style.display === "none") {
-                Menu.goodCanvas.canvas.style.zIndex = "2";
-                Menu.goodCanvas.canvas.style.display = "inline";
-                Menu.Menurender();
-                this.addin();
+            if (Menu.goodsCanvas.canvas.style.display === "none") {
+                Menu.goodsCanvas.canvas.style.zIndex = "2";
+                Menu.goodsCanvas.canvas.style.display = "inline";
+                Menu.render();
+                this.addToGoods(Menu.board);
             } else {
-                Menu.goodCanvas.canvas.style.display = "none";
-                Menu.goodCanvas.canvas.style.zIndex = "0";
+                Menu.goodsCanvas.canvas.style.display = "none";
+                Menu.goodsCanvas.canvas.style.zIndex = "0";
             }
         }
     }
 
-    private addin() {
-        this.goodsList.push(Menu.board);
+    private addToGoods(goods: any) {
+        this.goodsList.push(goods);
     }
 
     private zoom(event: MouseWheelEvent) {

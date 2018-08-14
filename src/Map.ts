@@ -2,7 +2,7 @@ import Container from "./Container";
 import Shape from "./Shape";
 
 export default class Map {
-    public static mainmap: string[];
+    public static main: string[];
     public static width: number = 2000;
     public static height: number = 1600;
     public static blockWidth: number = 40;
@@ -18,7 +18,7 @@ export default class Map {
         for (let i = 0; i < 92; i++) {
             Map.line[i] = new Shape();
         }
-        Map.mainmap = [
+        Map.main = [
             "00000000000000000000000000000000000000000000000000",
             "00000000000000000000000000000000000000000000000000",
             "00000000000000000000000000000000000000000000000000",
@@ -65,21 +65,29 @@ export default class Map {
     public createMap() {
         for ( let i = 0, k = 0; i < 40; i++) {
             for ( let j = 0; j < 50; j++) {
-                if (Map.mainmap[i][j] === "1") {
-                    Map.rect[k].saveRect(j * Map.blockWidth, i * Map.blockHeight, Map.blockWidth, Map.blockHeight);
-                    Map.rect[k].saveFill("#8B0000");
+                if (Map.main[i][j] === "1") {
+                    Map.rect[k].saveRect(
+                        j * Map.blockWidth,
+                        i * Map.blockHeight,
+                        Map.blockWidth,
+                        Map.blockHeight,
+                    ).saveFill("#8B0000");
                     Container.addChild(Map.rect[k++]);
                 }
             }
         }
         for (let i = 0; i < 41; i++) {
-            Map.line[i].saveLine({x: 0, y: i * Map.blockHeight}, {x: Map.width, y: i * Map.blockHeight});
-            Map.line[i].saveStroke("rgba(0, 0, 0, 0.1)", 2);
+            Map.line[i].saveLine(
+                { x: 0, y: i * Map.blockHeight },
+                { x: Map.width, y: i * Map.blockHeight },
+            ).saveStroke("rgba(0, 0, 0, 0.1)", 2);
             Container.addChild(Map.line[i]);
         }
         for (let i = 0; i < 51; i++) {
-            Map.line[i + 41].saveLine({x: i * Map.blockWidth, y: 0}, {x: i * Map.blockWidth, y: Map.height});
-            Map.line[i + 41].saveStroke("rgba(0, 0, 0, 0.1)", 2);
+            Map.line[i + 41].saveLine(
+                {x: i * Map.blockWidth, y: 0},
+                {x: i * Map.blockWidth, y: Map.height},
+            ).saveStroke("rgba(0, 0, 0, 0.1)", 2);
             Container.addChild(Map.line[i + 41]);
         }
         return this;

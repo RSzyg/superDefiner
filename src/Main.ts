@@ -87,6 +87,7 @@ export default class Main {
         if (this.dragingGoods !== undefined) {
             this.dragingGoods.x += (x - this.pointerX) / Camera.scale;
             this.dragingGoods.y += (y - this.pointerY) / Camera.scale;
+
             this.pointerX = x;
             this.pointerY = y;
         } else if (this.touched) {
@@ -98,6 +99,10 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
+        if (this.dragingGoods) {
+            this.dragingGoods.x = +(this.dragingGoods.x / 40).toFixed(0) * 40;
+            this.dragingGoods.y = +(this.dragingGoods.y / 40).toFixed(0) * 40;
+        }
         Camera.checkRange();
         this.touched = false;
         this.dragingGoods = undefined;

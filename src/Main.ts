@@ -113,6 +113,8 @@ export default class Main {
             shadow.x = snx * Camera.scale - Camera.x;
             shadow.y = sny * Camera.scale - Camera.y;
 
+            this.hitEdge(this.dragingGoods);
+
             this.pointerX = x;
             this.pointerY = y;
         } else if (this.touched) {
@@ -148,6 +150,21 @@ export default class Main {
         } else {
             Menu.goodsCanvas.canvas.style.display = "none";
             Menu.goodsCanvas.canvas.style.zIndex = "0";
+        }
+    }
+
+    private hitEdge(obj: {[key: string]: number}) {
+        if (obj.realX < 0) {
+            obj.realX = 0;
+        }
+        if (obj.realY < 0) {
+            obj.realY = 0;
+        }
+        if (obj.realX + obj.width > Map.width) {
+            obj.realX = Map.width - obj.width;
+        }
+        if (obj.realY + obj.height > Map.height) {
+            obj.realY = Map.height - obj.height;
         }
     }
 

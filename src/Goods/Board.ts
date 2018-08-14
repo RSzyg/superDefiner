@@ -11,18 +11,27 @@ export default class Board {
     public draggable: boolean;
     public shadowId: string;
     private id: string;
+    private widthCoef: number;
+    private heightCoef: number;
 
     constructor(x: number, y: number, alpha: number) {
         this.draggable = false;
         this.main = new Shape();
         this.texture = [];
+        this.widthCoef = 6;
+        this.heightCoef = 2;
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < this.widthCoef; i++) {
             this.texture[i] = new Shape();
             this.texture[i].saveStroke(`rgba(0, 0, 0, ${alpha})`, 2);
         }
 
-        this.main.saveRect(x * Map.blockWidth, y * Map.blockHeight, 6 * Map.blockWidth, 2 * Map.blockHeight);
+        this.main.saveRect(
+            x * Map.blockWidth,
+            y * Map.blockHeight,
+            this.widthCoef * Map.blockWidth,
+            this.heightCoef * Map.blockHeight,
+        );
         this.main.saveFill(`rgba(238, 121, 66, ${alpha})`);
         this.id = "Board" + Board.nextid;
         this.draggable = true;
@@ -36,7 +45,7 @@ export default class Board {
 
     public addToMenu() {
         Menu.addChild(this.main);
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < this.widthCoef; i++) {
             Menu.addChild(this.texture[i]);
         }
 
@@ -45,7 +54,7 @@ export default class Board {
 
     public addToContainer() {
         Container.addChild(this.main);
-        for ( let i = 0; i < 6; i++) {
+        for ( let i = 0; i < this.widthCoef; i++) {
             Container.addChild(this.texture[i]);
         }
 
@@ -103,7 +112,7 @@ export default class Board {
     set x(x: number) {
         const disx = (x - this.x) / Camera.scale;
         this.main.position[0].x = (x + Camera.x) / Camera.scale;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < this.widthCoef; i++) {
             this.texture[i].position[0].x += disx;
         }
     }
@@ -111,6 +120,16 @@ export default class Board {
     get realX(): number {
         if (this.main.position[0]) {
             return this.main.position[0].x;
+        }
+    }
+
+    set realX(x: number) {
+        if (this.main.position[0]) {
+            const disx = x - this.main.position[0].x;
+            this.main.position[0].x = x;
+            for (let i = 0; i < this.widthCoef; i++) {
+                this.texture[i].position[0].x += disx;
+            }
         }
     }
 
@@ -123,7 +142,7 @@ export default class Board {
     set y(y: number) {
         const disy = (y - this.y) / Camera.scale;
         this.main.position[0].y = (y + Camera.y) / Camera.scale;
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < this.widthCoef; i++) {
             this.texture[i].position[0].y += disy;
         }
     }
@@ -132,5 +151,25 @@ export default class Board {
         if (this.main.position[0]) {
             return this.main.position[0].y;
         }
+    }
+
+    set realY(y: number) {
+        if (this.main.position[0]) {
+            if (this.main.position[0]) {
+                const disy = y - this.main.position[0].y;
+                this.main.position[0].y = y;
+                for (let i = 0; i < this.widthCoef; i++) {
+                    this.texture[i].position[0].y += disy;
+                }
+            }
+        }
+    }
+
+    get width(): number {
+        return this.widthCoef * Map.blockWidth;
+    }
+
+    get height(): number {
+        return this.heightCoef * Map.blockHeight;
     }
 }

@@ -14,8 +14,7 @@ export default class Menu {
             Menu.goodsCanvas.canvas.style.backgroundColor = "#66ccff";
         }
         if (Menu.board === undefined ) {
-            Menu.board = new Goods.Board();
-            Menu.board.create(1, 1).addToMenu();
+            Menu.board = new Goods.Board(1, 1, 1).addToMenu();
         }
         return this;
     }

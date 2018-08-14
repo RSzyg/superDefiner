@@ -9,20 +9,21 @@ export default class Board {
     public main: Shape;
     public texture: Shape[];
     public draggable: boolean;
+    public shadowId: string;
     private id: string;
 
-    constructor() {
+    constructor(x: number, y: number, alpha: number) {
         this.draggable = false;
         this.main = new Shape();
         this.texture = [];
+
         for (let i = 0; i < 6; i++) {
             this.texture[i] = new Shape();
+            this.texture[i].saveStroke(`rgba(0, 0, 0, ${alpha})`, 2);
         }
-    }
 
-    public create(x: number, y: number) {
         this.main.saveRect(x * Map.blockWidth, y * Map.blockHeight, 6 * Map.blockWidth, 2 * Map.blockHeight);
-        this.main.saveFill("#EE7942");
+        this.main.saveFill(`rgba(238, 121, 66, ${alpha})`);
         this.id = "Board" + Board.nextid;
         this.draggable = true;
         this.texture[0].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 140, 150, 1.22, 1.93);
@@ -31,11 +32,6 @@ export default class Board {
         this.texture[3].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 200, 150, 10.59, 11.64);
         this.texture[4].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 210, 150, 10.59, 11.51);
         this.texture[5].saveArc(x * Map.blockWidth + 60, y * Map.blockHeight + 220, 150, 10.63, 11.36);
-        for (let i = 0; i < 6; i++) {
-            this.texture[i].saveStroke("black", 2);
-        }
-        Board.id++;
-        return this;
     }
 
     public addToMenu() {
@@ -43,6 +39,8 @@ export default class Board {
         for (let i = 0; i < 6; i++) {
             Menu.addChild(this.texture[i]);
         }
+
+        return this;
     }
 
     public addToContainer() {
@@ -50,6 +48,8 @@ export default class Board {
         for ( let i = 0; i < 6; i++) {
             Container.addChild(this.texture[i]);
         }
+
+        return this;
     }
 
     public clickInMap(x: number, y: number) {

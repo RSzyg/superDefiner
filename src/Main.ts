@@ -10,17 +10,17 @@ export default class Main {
     private map: Map;
     private touched: boolean;
     private dragingGoods: any;
-    private dragList: any[];
-    private goodsList: any[];
+    private dragList: {[key: string]: any};
+    private goodsList: {[key: string]: any};
     private pointerX: number;
     private pointerY: number;
 
     constructor() {
         this.role1 = new Role();
         this.map = new Map();
-        this.dragList = [];
+        this.dragList = {};
+        this.goodsList = {};
         this.touched = false;
-        this.goodsList = [];
     }
 
     public createScene() {
@@ -90,10 +90,13 @@ export default class Main {
         this.touched = true;
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        for (const goods of this.dragList) {
-            if (goods.clickInMap(this.pointerX, this.pointerY)) {
-                this.dragingGoods = goods;
-                return;
+        for (const id in this.dragList) {
+            if (this.dragList[id]) {
+                const goods = this.dragList[id];
+                if (goods.clickInMap(this.pointerX, this.pointerY)) {
+                    this.dragingGoods = goods;
+                    return;
+                }
             }
         }
     }
@@ -109,7 +112,7 @@ export default class Main {
                 (event.pageY + Camera.y) / Camera.scale / Map.blockHeight,
             );
             board.addToContainer();
-            this.dragList.push(board);
+            this.dragList[board.uuid] = board;
             this.dragingGoods = board;
         }
     }
@@ -154,7 +157,7 @@ export default class Main {
     }
 
     private addToGoods(goods: any) {
-        this.goodsList.push(goods);
+        this.goodsList[goods.id] = goods;
     }
 
     private zoom(event: MouseWheelEvent) {

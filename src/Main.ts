@@ -63,12 +63,19 @@ export default class Main {
     private draggoodBefore(event: any) {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        Menu.goodCanvas.canvas.style.display = "none";
-        const board = new Goods.Board();
-        board.create((event.pageX + Camera.x) / Camera.scale / 40, (event.pageY + Camera.y) / Camera.scale / 40);
-        board.addToContainer();
-        this.dragList.push(board);
-        this.dragingGoods = board;
+        if (this.pointerX < Map.blockWidth + 6 * Map.blockWidth && this.pointerX > Map.blockWidth &&
+            this.pointerY > Map.blockHeight && this.pointerY < Map.blockHeight + 2 * Map.blockHeight
+            ) {
+            Menu.goodCanvas.canvas.style.display = "none";
+            const board = new Goods.Board();
+            board.create(
+                (event.pageX + Camera.x) / Camera.scale / Map.blockWidth,
+                (event.pageY + Camera.y) / Camera.scale / Map.blockHeight,
+            );
+            board.addToContainer();
+            this.dragList.push(board);
+            this.dragingGoods = board;
+        }
         // this.touched = true;
         // this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         // this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;

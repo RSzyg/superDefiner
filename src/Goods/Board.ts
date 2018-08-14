@@ -96,13 +96,13 @@ export default class Board {
 
     get x(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].x;
+            return this.main.position[0].x * Camera.scale - Camera.x;
         }
     }
 
     set x(x: number) {
-        const disx = (x - this.x);
-        this.main.position[0].x = x;
+        const disx = (x - this.x) / Camera.scale;
+        this.main.position[0].x = (x + Camera.x) / Camera.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].x += disx;
         }
@@ -110,13 +110,13 @@ export default class Board {
 
     get y(): number {
         if (this.main.position[0]) {
-            return this.main.position[0].y;
+            return this.main.position[0].y * Camera.scale - Camera.y;
         }
     }
 
     set y(y: number) {
-        const disy = (y - this.y);
-        this.main.position[0].y = y;
+        const disy = (y - this.y) / Camera.scale;
+        this.main.position[0].y = (y + Camera.y) / Camera.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].y += disy;
         }

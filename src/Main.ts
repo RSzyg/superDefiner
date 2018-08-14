@@ -76,13 +76,13 @@ export default class Main {
         if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
             Menu.goodsCanvas.canvas.style.display = "none";
             const board = new Goods.Board(
-                (event.pageX + Camera.x) / Camera.scale / Map.blockWidth,
-                (event.pageY + Camera.y) / Camera.scale / Map.blockHeight,
+                (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
+                (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
                 1,
             );
             const shadow = new Goods.Board(
-                +(board.x / Map.blockWidth).toFixed(0),
-                +(board.y / Map.blockHeight).toFixed(0),
+                +((board.x + Camera.x) / Camera.scale / Map.blockWidth).toFixed(0),
+                +((board.y + Camera.y) / Camera.scale / Map.blockHeight).toFixed(0),
                 0.4,
             );
 
@@ -100,12 +100,18 @@ export default class Main {
         const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
         const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
         if (this.dragingGoods !== undefined) {
-            this.dragingGoods.x += (x - this.pointerX) / Camera.scale;
-            this.dragingGoods.y += (y - this.pointerY) / Camera.scale;
+            this.dragingGoods.x += (x - this.pointerX);
+            this.dragingGoods.y += (y - this.pointerY);
 
             const shadow = this.shadowList[this.dragingGoods.shadowId];
-            shadow.x = +(this.dragingGoods.x / Map.blockWidth).toFixed(0) * Map.blockWidth;
-            shadow.y = +(this.dragingGoods.y / Map.blockHeight).toFixed(0) * Map.blockHeight;
+            const width = Map.blockWidth * Camera.scale;
+            const height = Map.blockHeight * Camera.scale;
+
+            const snx = +((this.dragingGoods.x + Camera.x) / width).toFixed(0) * Map.blockWidth;
+            const sny = +((this.dragingGoods.y + Camera.y) / height).toFixed(0) * Map.blockHeight;
+
+            shadow.x = snx * Camera.scale - Camera.x;
+            shadow.y = sny * Camera.scale - Camera.y;
 
             this.pointerX = x;
             this.pointerY = y;
@@ -119,8 +125,14 @@ export default class Main {
 
     private dragEnd(event: any) {
         if (this.dragingGoods) {
-            this.dragingGoods.x = +(this.dragingGoods.x / Map.blockWidth).toFixed(0) * Map.blockWidth;
-            this.dragingGoods.y = +(this.dragingGoods.y / Map.blockHeight).toFixed(0) * Map.blockHeight;
+            const width = Map.blockWidth * Camera.scale;
+            const height = Map.blockHeight * Camera.scale;
+
+            const snx = +((this.dragingGoods.x + Camera.x) / width).toFixed(0) * Map.blockWidth;
+            const sny = +((this.dragingGoods.y + Camera.y) / height).toFixed(0) * Map.blockHeight;
+
+            this.dragingGoods.x = snx * Camera.scale - Camera.x;
+            this.dragingGoods.y = sny * Camera.scale - Camera.y;
         }
         Camera.checkRange();
         this.touched = false;

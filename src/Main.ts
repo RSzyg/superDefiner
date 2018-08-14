@@ -81,8 +81,8 @@ export default class Main {
                 1,
             );
             const shadow = new Goods.Board(
-                +((board.x + Camera.x) / Camera.scale / Map.blockWidth).toFixed(0),
-                +((board.y + Camera.y) / Camera.scale / Map.blockHeight).toFixed(0),
+                +(board.realX / Map.blockWidth).toFixed(0),
+                +(board.realY / Map.blockHeight).toFixed(0),
                 0.4,
             );
 
@@ -104,11 +104,11 @@ export default class Main {
             this.dragingGoods.y += (y - this.pointerY);
 
             const shadow = this.shadowList[this.dragingGoods.shadowId];
-            const width = Map.blockWidth * Camera.scale;
-            const height = Map.blockHeight * Camera.scale;
+            const width = Map.blockWidth;
+            const height = Map.blockHeight;
 
-            const snx = +((this.dragingGoods.x + Camera.x) / width).toFixed(0) * Map.blockWidth;
-            const sny = +((this.dragingGoods.y + Camera.y) / height).toFixed(0) * Map.blockHeight;
+            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
 
             shadow.x = snx * Camera.scale - Camera.x;
             shadow.y = sny * Camera.scale - Camera.y;
@@ -125,11 +125,11 @@ export default class Main {
 
     private dragEnd(event: any) {
         if (this.dragingGoods) {
-            const width = Map.blockWidth * Camera.scale;
-            const height = Map.blockHeight * Camera.scale;
+            const width = Map.blockWidth;
+            const height = Map.blockHeight;
 
-            const snx = +((this.dragingGoods.x + Camera.x) / width).toFixed(0) * Map.blockWidth;
-            const sny = +((this.dragingGoods.y + Camera.y) / height).toFixed(0) * Map.blockHeight;
+            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
 
             this.dragingGoods.x = snx * Camera.scale - Camera.x;
             this.dragingGoods.y = sny * Camera.scale - Camera.y;

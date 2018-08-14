@@ -108,6 +108,12 @@ export default class Board {
         }
     }
 
+    get realX(): number {
+        if (this.main.position[0]) {
+            return this.main.position[0].x;
+        }
+    }
+
     get y(): number {
         if (this.main.position[0]) {
             return this.main.position[0].y * Camera.scale - Camera.y;
@@ -119,6 +125,12 @@ export default class Board {
         this.main.position[0].y = (y + Camera.y) / Camera.scale;
         for (let i = 0; i < 6; i++) {
             this.texture[i].position[0].y += disy;
+        }
+    }
+
+    get realY(): number {
+        if (this.main.position[0]) {
+            return this.main.position[0].y;
         }
     }
 }

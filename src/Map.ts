@@ -3,9 +3,17 @@ import Shape from "./Shape";
 
 export default class Map {
     public static mainmap: string[];
+    public static mainmapwidth: number;
+    public static mainmapheight: number;
+    public static basicwidth: number;
+    public static basicheight: number;
     public static rect: Shape[];
     public static line: Shape[];
     constructor() {
+        Map.mainmapwidth = 2000;
+        Map.mainmapheight = 1600;
+        Map.basicwidth = 40;
+        Map.basicheight = 40;
         Map.rect = [];
         for ( let i = 0; i < 210; i++) {
             Map.rect[i] = new Shape();
@@ -62,19 +70,19 @@ export default class Map {
         for ( let i = 0, k = 0; i < 40; i++) {
             for ( let j = 0; j < 50; j++) {
                 if (Map.mainmap[i][j] === "1") {
-                    Map.rect[k].saveRect(j * 40, i * 40, 40, 40);
+                    Map.rect[k].saveRect(j * 40, i * 40, Map.basicwidth, Map.basicheight);
                     Map.rect[k].saveFill("#8B0000");
                     Container.addChild(Map.rect[k++]);
                 }
             }
         }
         for (let i = 0; i < 41; i++) {
-            Map.line[i].saveLine({x: 0, y: i * 40}, {x: 2000, y: i * 40});
+            Map.line[i].saveLine({x: 0, y: i * Map.basicheight}, {x: 2000, y: i * Map.basicheight});
             Map.line[i].saveStroke("rgba(0, 0, 0, 0.1)", 2);
             Container.addChild(Map.line[i]);
         }
         for (let i = 0; i < 51; i++) {
-            Map.line[i + 41].saveLine({x: i * 40, y: 0}, {x: i * 40, y: 1600});
+            Map.line[i + 41].saveLine({x: i * Map.basicwidth, y: 0}, {x: i * Map.basicwidth, y: 1600});
             Map.line[i + 41].saveStroke("rgba(0, 0, 0, 0.1)", 2);
             Container.addChild(Map.line[i + 41]);
         }

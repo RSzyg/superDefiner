@@ -5,14 +5,13 @@ import Menu from "../Menu";
 import Shape from "../Shape";
 
 export default class Board {
-    public static id: number;
-    public uuid: string;
+    public static id: number = 0;
     public main: Shape;
     public texture: Shape[];
     public draggable: boolean;
+    private id: string;
 
     constructor() {
-        Board.id = 0;
         this.draggable = false;
         this.main = new Shape();
         this.texture = [];
@@ -24,7 +23,7 @@ export default class Board {
     public create(x: number, y: number) {
         this.main.saveRect(x * Map.blockWidth, y * Map.blockHeight, 6 * Map.blockWidth, 2 * Map.blockHeight);
         this.main.saveFill("#EE7942");
-        this.uuid = "Board" + Board.id;
+        this.id = "Board" + Board.nextid;
         this.draggable = true;
         this.texture[0].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 140, 150, 1.22, 1.93);
         this.texture[1].saveArc(x * Map.blockWidth + 180, y * Map.blockHeight - 130, 150, 1.16, 2.08);
@@ -85,6 +84,14 @@ export default class Board {
             }
         }
         return false;
+    }
+
+    private static get nextid(): number {
+        return Board.id++;
+    }
+
+    get uuid(): string {
+        return this.id;
     }
 
     get x(): number {

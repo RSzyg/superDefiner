@@ -1,7 +1,6 @@
 export default class Shape {
 
-    public static id: number;
-    public uuid: string;
+    public static id: number = 0;
     public type: string;
     public fillStyle: string;
     public strokeStyle: string;
@@ -12,14 +11,11 @@ export default class Shape {
     public radius: number;
     public startAngle: number;
     public endAngle: number;
-
-    constructor() {
-        Shape.id = 0;
-    }
+    private id: string;
 
     public saveRect(x: number, y: number, width: number, height: number) {
         this.type = "rect";
-        this.uuid = this.type + Shape.id;
+        this.id = this.type + Shape.nextid;
         this.position = [{ x, y }];
         this.width = width;
         this.height = height;
@@ -28,7 +24,7 @@ export default class Shape {
 
     public saveCircle(x: number, y: number, radius: number) {
         this.type = "circle";
-        this.uuid = this.type + Shape.id;
+        this.id = this.type + Shape.nextid;
         this.position = [{ x, y }];
         this.radius = radius;
         return this;
@@ -36,7 +32,7 @@ export default class Shape {
 
     public saveArc(x: number, y: number, radius: number, startAngle: number, endAngle: number) {
         this.type = "arc";
-        this.uuid = this.type + Shape.id;
+        this.id = this.type + Shape.nextid;
         this.position = [{ x, y }];
         this.radius = radius;
         this.startAngle = startAngle;
@@ -46,14 +42,14 @@ export default class Shape {
 
     public saveTriangle(p1: {[key: string]: any}, p2: {[key: string]: any}, p3: {[key: string]: any}) {
         this.type = "triangle";
-        this.uuid = this.type + Shape.id;
+        this.id = this.type + Shape.nextid;
         this.position = [p1, p2, p3];
         return this;
     }
 
     public saveLine(p1: {[key: string]: any}, p2: {[key: string]: any}) {
         this.type = "line";
-        this.uuid = this.type + Shape.id;
+        this.id = this.type + Shape.nextid;
         this.position = [p1, p2];
         return this;
     }
@@ -69,7 +65,11 @@ export default class Shape {
         return this;
     }
 
-    get id() {
+    private static get nextid(): number {
         return Shape.id++;
+    }
+
+    get uuid(): string {
+        return this.id;
     }
 }

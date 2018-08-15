@@ -2,93 +2,72 @@ import Container from "./Container";
 import Shape from "./Shape";
 
 export default class Map {
-    public static main: string[];
-    public static width: number = 2000;
-    public static height: number = 1600;
-    public static blockWidth: number = 40;
-    public static blockHeight: number = 40;
-    public static rect: Shape[];
-    public static line: Shape[];
-    constructor() {
-        Map.rect = [];
-        for ( let i = 0; i < 210; i++) {
-            Map.rect[i] = new Shape();
-        }
-        Map.line = [];
-        for (let i = 0; i < 92; i++) {
-            Map.line[i] = new Shape();
-        }
-        Map.main = [
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000111111111100000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "00000000000000000000000000000000000000000000000000",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-            "11111111110000000000000000000000000000001111111111",
-        ];
-    }
+    public static width: number;
+    public static height: number;
+    public static blockWidth: number;
+    public static blockHeight: number;
+    public block: { [key: string]: Shape } = {};
+    public grid: { [key: string]: Shape } = {};
 
-    public createMap() {
-        for ( let i = 0, k = 0; i < 40; i++) {
-            for ( let j = 0; j < 50; j++) {
-                if (Map.main[i][j] === "1") {
-                    Map.rect[k].saveRect(
-                        j * Map.blockWidth,
-                        i * Map.blockHeight,
-                        Map.blockWidth,
-                        Map.blockHeight,
-                    ).saveFill("#8B0000");
-                    Container.addChild(Map.rect[k++]);
-                }
+    public createMap(width: number, height: number, blockWidth: number, blockHeight: number) {
+        Map.width = width;
+        Map.height = height;
+        Map.blockWidth = blockWidth;
+        Map.blockHeight = blockHeight;
+        for ( let i = 30; i < 40; i++) {
+            for ( let j = 0; j < 10; j++) {
+                const block = new Shape();
+                block.saveRect(
+                    j * Map.blockWidth,
+                    i * Map.blockHeight,
+                    Map.blockWidth,
+                    Map.blockHeight,
+                ).saveFill("#8B0000");
+                Container.addChild(block);
+                this.block[block.uuid] = block;
             }
         }
+        for ( let i = 30; i < 40; i++) {
+            for ( let j = 40; j < 50; j++) {
+                const block = new Shape();
+                block.saveRect(
+                    j * Map.blockWidth,
+                    i * Map.blockHeight,
+                    Map.blockWidth,
+                    Map.blockHeight,
+                ).saveFill("#8B0000");
+                Container.addChild(block);
+                this.block[block.uuid] = block;
+            }
+        }
+        for ( let i = 20; i < 30; i++) {
+                const block = new Shape();
+                block.saveRect(
+                    i * Map.blockWidth,
+                    28 * Map.blockHeight,
+                    Map.blockWidth,
+                    Map.blockHeight,
+                ).saveFill("#8B0000");
+                Container.addChild(block);
+                this.block[block.uuid] = block;
+        }
         for (let i = 0; i < 41; i++) {
-            Map.line[i].saveLine(
+            const grid = new Shape();
+            grid.saveLine(
                 { x: 0, y: i * Map.blockHeight },
                 { x: Map.width, y: i * Map.blockHeight },
             ).saveStroke("rgba(0, 0, 0, 0.1)", 2);
-            Container.addChild(Map.line[i]);
+            Container.addChild(grid);
+            this.grid[grid.uuid] = grid;
         }
         for (let i = 0; i < 51; i++) {
-            Map.line[i + 41].saveLine(
+            const grid = new Shape();
+            grid.saveLine(
                 {x: i * Map.blockWidth, y: 0},
                 {x: i * Map.blockWidth, y: Map.height},
             ).saveStroke("rgba(0, 0, 0, 0.1)", 2);
-            Container.addChild(Map.line[i + 41]);
+            Container.addChild(grid);
+            this.grid[grid.uuid] = grid;
         }
         return this;
     }

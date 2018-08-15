@@ -3,8 +3,14 @@ import Container from "./Container";
 import * as Goods from "./Goods";
 import Map from "./Map";
 import Menu from "./Menu";
+import Role from "./Role";
 
 export default class Main {
+
+    public keydown: {[key: string]: boolean};
+    public role1: Role;
+    public boot: number = 5;
+    public temp: number[][];
     private map: Map;
     private touched: boolean;
     private dragingGoods: any;
@@ -15,16 +21,38 @@ export default class Main {
     private pointerY: number;
 
     constructor() {
+        this.keydown = {};
+        this.role1 = new Role();
         this.map = new Map();
         this.dragList = {};
         this.goodsList = {};
         this.shadowList = {};
         this.touched = false;
+        this.temp = [];
+        for (let i = 0; i < Map.height; i++) {
+            this.temp[i] = new Array();
+        }
+        // for (let i = 0; i < 40; i++) {
+        //     for (let j = 0; j < 50; j++) {
+        //         for (let k = 0; k < Map.blockHeight; k++) {
+        //             for (let l = 0; l < Map.blockWidth; l++) {
+        //                 this.temp[i * Map.blockHeight + k][j * Map.blockWidth + l] = (+Map.main[i][j]);
+        //             }
+        //         }
+        //     }
+        // }
+        for ( let i = 0; i < Map.height; i ++ ) {
+            for ( let j = 0; j < Map.width; j++) {
+                this.temp[i][j] = (+Map.main[Math.floor(i / 40)][Math.floor(j / 40)]);
+            }
+        }
     }
 
     public createScene() {
         this.map.createMap();
+        this.role1.create(120, 1120);
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
+        window.addEventListener("keyup", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
@@ -45,14 +73,143 @@ export default class Main {
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
     }
 
+    public render() {
+        if (this.keydown.KeyA) {
+            this.RoleMove("left");
+        }
+        if (this.keydown.KeyS) {
+            this.RoleMove("down");
+        }
+        if (this.keydown.KeyW) {
+            this.RoleMove("up");
+        }
+        if (this.keydown.KeyD) {
+            this.RoleMove("right");
+        }
+        requestAnimationFrame(() => this.render());
+    }
+
     private keyboardController(event: KeyboardEvent) {
-        switch (event.code) {
-            case "KeyQ":
-                this.menuController();
+        if (event.type === "keydown") {
+            this.keydown[event.code] = true;
+            switch (event.code) {
+                case "KeyQ":
+                    this.menuController();
+                    break;
+                default:
+                    break;
+            }
+        } else if (event.type === "keyup") {
+            this.keydown[event.code] = false;
+            // switch (event.code) {
+            //     case "KeyQ":
+            //         // this.menuController();
+            //         break;
+            //     default:
+            //         break;
+            // }
+        }
+
+    }
+    private RoleMove(dir: string) {
+        switch (dir) {
+            case "left":
+                if (this.role1.realX - this.boot < 0) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY][this.role1.realX - this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height][this.role1.realX - this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.bodyheight][this.role1.realX - this.boot] !== 1
+                        ) {
+                        this.role1.realX += -this.boot;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY]
+                            [this.role1.realX - 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height]
+                            [this.role1.realX - 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.bodyheight]
+                            [this.role1.realX - 1] !== 1
+                        ) {
+                            this.role1.realX += -1;
+                        }
+                    }
+                }
+                break;
+            case "right":
+                if (this.role1.realX + this.role1.width + this.boot >= Map.width) {
+                    this.role1.realX += this.boot;
+                } else {
+                    if (
+                        this.temp[this.role1.realY][this.role1.realX + this.role1.width + this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height]
+                        [this.role1.realX + this.role1.width + this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.bodyheight]
+                        [this.role1.realX + this.role1.width + this.boot] !== 1
+                    ) {
+                        this.role1.realX += this.boot;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY]
+                            [this.role1.realX + this.role1.width + 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height]
+                            [this.role1.realX + this.role1.width + 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.bodyheight]
+                            [this.role1.realX + this.role1.width + 1] !== 1
+                        ) {
+                            this.role1.realX += 1;
+                        }
+                    }
+                }
+                break;
+            case "up":
+                if (this.role1.realY - this.boot < 0) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY - this.boot][this.role1.realX] !== 1 &&
+                        this.temp[this.role1.realY - this.boot][this.role1.realX + this.role1.width] !== 1
+                    ) {
+                        this.role1.realY += -this.boot;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY - 1]
+                            [this.role1.realX] !== 1 &&
+                            this.temp[this.role1.realY - 1]
+                            [this.role1.realX + this.role1.width] !== 1
+                        ) {
+                            this.role1.realY += -1;
+                        }
+                    }
+                }
+                break;
+            case "down":
+                if (this.role1.realY + this.role1.height + this.boot >= Map.height) {
+                    this.role1.realY += this.boot;
+                } else {
+                    if (
+                        this.temp[this.role1.realY + this.role1.height + this.boot][this.role1.realX] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height + this.boot]
+                        [this.role1.realX + this.role1.width] !== 1
+                    ) {
+                        this.role1.realY += this.boot;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY + this.role1.height + 1]
+                            [this.role1.realX + this.role1.width] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height + 1]
+                            [this.role1.realX] !== 1
+                        ) {
+                            this.role1.realY += 1;
+                        }
+                    }
+                }
                 break;
             default:
                 break;
         }
+        this.hitEdge(this.role1);
     }
 
     private dragBefore(event: any) {
@@ -153,18 +310,18 @@ export default class Main {
         }
     }
 
-    private hitEdge(obj: {[key: string]: number}) {
-        if (obj.realX < 0) {
+    private hitEdge(obj: {[key: string]: any | Role}) {
+        if (obj.realX <= 0) {
             obj.realX = 0;
         }
-        if (obj.realY < 0) {
+        if (obj.realY <= 0) {
             obj.realY = 0;
         }
-        if (obj.realX + obj.width > Map.width) {
-            obj.realX = Map.width - obj.width;
+        if (obj.realX + obj.width >= Map.width) {
+            obj.realX = Map.width - obj.width - 1;
         }
-        if (obj.realY + obj.height > Map.height) {
-            obj.realY = Map.height - obj.height;
+        if (obj.realY + obj.height >= Map.height) {
+            obj.realY = Map.height - obj.height - 1;
         }
     }
 
@@ -180,4 +337,5 @@ export default class Main {
         }
         Camera.checkRange();
     }
+
 }

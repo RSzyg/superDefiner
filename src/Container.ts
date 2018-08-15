@@ -117,7 +117,6 @@ export default class Container {
                 Container.mainCanvas.ctx.closePath();
             }
         }
-
         requestAnimationFrame(() => Container.render());
     }
 

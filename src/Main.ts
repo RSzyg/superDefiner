@@ -36,7 +36,7 @@ export default class Main {
         this.map.createMap(2000, 1600, 40, 40);
         this.createRole();
         this.update();
-
+        Menu.create();
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         window.addEventListener("keyup", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });

@@ -28,6 +28,7 @@ export default class Role {
     constructor(data: {[key: string]: number}) {
         this.selfx = data.x;
         this.selfy = data.y;
+        this.moveStep = data.moveStep;
         this.create();
     }
 

@@ -15,7 +15,6 @@ export default class Main {
     private touched: boolean;
     private dragingGoods: any;
     private dragList: {[key: string]: any};
-    private goodsList: {[key: string]: any};
     private shadowList: {[key: string]: any};
     private pointerX: number;
     private pointerY: number;
@@ -27,7 +26,6 @@ export default class Main {
         this.keydown = {};
         this.roles = {};
         this.dragList = {};
-        this.goodsList = {};
         this.shadowList = {};
         this.touched = false;
     }
@@ -36,7 +34,7 @@ export default class Main {
         this.map.createMap(2000, 1600, 40, 40);
         this.createRole();
         this.update();
-
+        Menu.create();
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         window.addEventListener("keyup", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
@@ -174,11 +172,17 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
+        const shadow = this.shadowList[this.dragingGoods.shadowId];
         if (this.dragingGoods) {
-            const shadow = this.shadowList[this.dragingGoods.shadowId];
-
-            this.dragingGoods.x = shadow.realX * Camera.scale - Camera.x;
-            this.dragingGoods.y = shadow.realY * Camera.scale - Camera.y;
+            if (this.collision(shadow, false, null)) {
+                shadow.removeFromContainer();
+                this.dragingGoods.removeFromContainer();
+                delete this.shadowList[shadow.uuid];
+                delete this.dragList[this.dragingGoods.uuid];
+            } else {
+                this.dragingGoods.x = shadow.realX * Camera.scale - Camera.x;
+                this.dragingGoods.y = shadow.realY * Camera.scale - Camera.y;
+            }
         }
         Camera.checkRange();
         this.touched = false;
@@ -190,7 +194,6 @@ export default class Main {
             Menu.goodsCanvas.canvas.style.zIndex = "2";
             Menu.goodsCanvas.canvas.style.display = "inline";
             Menu.render();
-            this.addToGoods(Menu.board);
         } else {
             Menu.goodsCanvas.canvas.style.display = "none";
             Menu.goodsCanvas.canvas.style.zIndex = "0";
@@ -213,13 +216,17 @@ export default class Main {
         }
 
         for (const id in this.dragList) {
-            if (this.dragList[id] && id !== obj.uuid) {
+            if (
+                this.dragList[id] &&
+                id !== obj.uuid &&
+                this.dragList[id].shadowId !== obj.uuid
+            ) {
                 const goods = this.dragList[id];
                 if (
-                    obj.left <= goods.right &&
-                    obj.right >= goods.left &&
-                    obj.top <= goods.bottom &&
-                    obj.bottom >= goods.top
+                    !(obj.left > goods.right ||
+                    obj.right < goods.left ||
+                    obj.top > goods.bottom ||
+                    obj.bottom < goods.top)
                 ) {
                     if (correction) {
                         this.correct(obj, goods, dir);
@@ -245,10 +252,6 @@ export default class Main {
         ];
         host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
         host.realY -= (value[dir] * Math.abs(this.diry[dir]));
-    }
-
-    private addToGoods(goods: any) {
-        this.goodsList[goods.id] = goods;
     }
 
     private zoom(event: MouseWheelEvent) {

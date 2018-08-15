@@ -61,6 +61,15 @@ export default class Board {
         return this;
     }
 
+    public removeFromContainer() {
+        Container.removeChild(this.main.uuid);
+        for ( let i = 0; i < this.widthCoef; i++) {
+            Container.removeChild(this.texture[i].uuid);
+        }
+
+        return this;
+    }
+
     public clickInMap(x: number, y: number) {
         if (
             x < (this.main.position[0].x + this.main.width) * Camera.scale - Camera.x &&

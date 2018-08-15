@@ -62,13 +62,13 @@ export default class Role {
         Role.id++;
     }
 
-    get x() {
+    get realX() {
         return this.selfx;
     }
 
-    set x(x: number) {
-        const disx = x;
-        this.selfx += x;
+    set realX(x: number) {
+        const disx = x - this.selfx;
+        this.selfx = x;
         this.head.position[0].x += disx;
         this.body.position[0].x += disx;
         this.body.position[1].x += disx;
@@ -82,13 +82,13 @@ export default class Role {
         this.rightFoot.position[1].x += disx;
     }
 
-    get y() {
+    get realY() {
         return this.selfy;
     }
 
-    set y(y: number) {
-        const disy = y;
-        this.selfy += y;
+    set realY(y: number) {
+        const disy = y - this.selfy;
+        this.selfy = y;
         this.head.position[0].y += disy;
         this.body.position[0].y += disy;
         this.body.position[1].y += disy;

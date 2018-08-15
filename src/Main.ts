@@ -75,16 +75,16 @@ export default class Main {
 
     public render() {
         if (this.keydown.KeyA) {
-            this.RoleMoveLeft();
+            this.RoleMove("left");
         }
         if (this.keydown.KeyS) {
-            this.RoleMoveDown();
+            this.RoleMove("down");
         }
         if (this.keydown.KeyW) {
-            this.RoleMoveUp();
+            this.RoleMove("up");
         }
         if (this.keydown.KeyD) {
-            this.RoleMoveRight();
+            this.RoleMove("right");
         }
         requestAnimationFrame(() => this.render());
     }
@@ -111,69 +111,105 @@ export default class Main {
         }
 
     }
-
-    private RoleMoveLeft() {
-        if (
-            this.temp[this.role1.y][this.role1.x - this.boot] !== 1 &&
-            this.temp[this.role1.y + this.role1.height][this.role1.x - this.boot] !== 1 &&
-            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x - this.boot] !== 1
-            ) {
-            this.role1.x = -5;
-        } else {
-            while (this.temp[this.role1.y][this.role1.x - 1] !== 1 &&
-                this.temp[this.role1.y + this.role1.height][this.role1.x - 1] !== 1 &&
-                this.temp[this.role1.y + this.role1.bodyheight][this.role1.x - 1] !== 1
-            ) {
-                this.role1.x = -1;
-            }
+    private RoleMove(dir: string) {
+        switch (dir) {
+            case "left":
+                if (this.role1.realX - this.boot < 0) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY][this.role1.realX - this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height][this.role1.realX - this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.bodyheight][this.role1.realX - this.boot] !== 1
+                        ) {
+                        this.role1.realX += -5;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY]
+                            [this.role1.realX - 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height]
+                            [this.role1.realX - 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.bodyheight]
+                            [this.role1.realX - 1] !== 1
+                        ) {
+                            this.role1.realX += -1;
+                        }
+                    }
+                }
+                break;
+            case "right":
+                if (this.role1.realX + this.role1.width + this.boot > Map.width) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY][this.role1.realX + this.role1.width + this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height]
+                        [this.role1.realX + this.role1.width + this.boot] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.bodyheight]
+                        [this.role1.realX + this.role1.width + this.boot] !== 1
+                    ) {
+                        this.role1.realX += 5;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY]
+                            [this.role1.realX + this.role1.width + 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height]
+                            [this.role1.realX + this.role1.width + 1] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.bodyheight]
+                            [this.role1.realX + this.role1.width + 1] !== 1
+                        ) {
+                            this.role1.realX += 1;
+                        }
+                    }
+                }
+                break;
+            case "up":
+                if (this.role1.realY - this.boot < 0) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY - this.boot][this.role1.realX] !== 1 &&
+                        this.temp[this.role1.realY - this.boot][this.role1.realX + this.role1.width] !== 1
+                    ) {
+                        this.role1.realY += -5;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY - 1]
+                            [this.role1.realX] !== 1 &&
+                            this.temp[this.role1.realY - 1]
+                            [this.role1.realX + this.role1.width] !== 1
+                        ) {
+                            this.role1.realY += -1;
+                        }
+                    }
+                }
+                break;
+            case "down":
+                if (this.role1.realY + this.role1.height + this.boot > Map.height) {
+                    return;
+                } else {
+                    if (
+                        this.temp[this.role1.realY + this.role1.height + this.boot][this.role1.realX] !== 1 &&
+                        this.temp[this.role1.realY + this.role1.height + this.boot]
+                        [this.role1.realX + this.role1.width] !== 1
+                    ) {
+                        this.role1.realY += 5;
+                    } else {
+                        while (
+                            this.temp[this.role1.realY + this.role1.height + 1]
+                            [this.role1.realX + this.role1.width] !== 1 &&
+                            this.temp[this.role1.realY + this.role1.height + 1]
+                            [this.role1.realX] !== 1
+                        ) {
+                            this.role1.realY += 1;
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
         }
-    }
-
-    private RoleMoveRight() {
-        if (
-            this.temp[this.role1.y][this.role1.x + this.role1.width + this.boot] !== 1 &&
-            this.temp[this.role1.y + this.role1.height][this.role1.x + this.role1.width + this.boot] !== 1 &&
-            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x + this.role1.width + this.boot] !== 1
-        ) {
-            this.role1.x = 5;
-        } else {
-            while (this.temp[this.role1.y][this.role1.x + this.role1.width + 1] !== 1 &&
-            this.temp[this.role1.y + this.role1.height][this.role1.x + this.role1.width + 1] !== 1 &&
-            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x + this.role1.width + 1] !== 1
-            ) {
-                this.role1.x = 1;
-            }
-        }
-    }
-
-    private RoleMoveUp() {
-        if (
-            this.temp[this.role1.y - this.boot][this.role1.x] !== 1 &&
-            this.temp[this.role1.y - this.boot][this.role1.x + this.role1.width] !== 1
-        ) {
-            this.role1.y = -5;
-        } else {
-            while (this.temp[this.role1.y - 1][this.role1.x] !== 1 &&
-                this.temp[this.role1.y - 1][this.role1.x + this.role1.width] !== 1
-            ) {
-                this.role1.y = -1;
-            }
-        }
-    }
-
-    private RoleMoveDown() {
-        if (
-            this.temp[this.role1.y + this.role1.height + this.boot][this.role1.x] !== 1 &&
-            this.temp[this.role1.y + this.role1.height + this.boot][this.role1.x + this.role1.width] !== 1
-        ) {
-            this.role1.y = 5;
-        } else {
-            while (this.temp[this.role1.y + this.role1.height + 1][this.role1.x + this.role1.width] !== 1 &&
-                this.temp[this.role1.y + this.role1.height + 1][this.role1.x] !== 1
-            ) {
-                this.role1.y = 1;
-            }
-        }
+        this.hitEdge(this.role1);
     }
 
     private dragBefore(event: any) {
@@ -274,17 +310,17 @@ export default class Main {
         }
     }
 
-    private hitEdge(obj: {[key: string]: number}) {
-        if (obj.realX < 0) {
+    private hitEdge(obj: {[key: string]: any | Role}) {
+        if (obj.realX <= 0) {
             obj.realX = 0;
         }
-        if (obj.realY < 0) {
+        if (obj.realY <= 0) {
             obj.realY = 0;
         }
-        if (obj.realX + obj.width > Map.width) {
+        if (obj.realX + obj.width >= Map.width) {
             obj.realX = Map.width - obj.width;
         }
-        if (obj.realY + obj.height > Map.height) {
+        if (obj.realY + obj.height >= Map.height) {
             obj.realY = Map.height - obj.height;
         }
     }

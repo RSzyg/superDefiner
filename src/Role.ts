@@ -5,7 +5,6 @@ import Shape from "./Shape";
 
 export default class Role {
     public static id = 0;
-    public roleId: number = Role.id;
     public width: number = 40;
     public height: number = 70;
     public headradius: number = 10;
@@ -21,12 +20,18 @@ export default class Role {
     public rightHand: Shape = new Shape();
     public leftFoot: Shape = new Shape();
     public rightFoot: Shape = new Shape();
+    public moveStep: number;
+    private id: string;
     private selfx: number;
     private selfy: number;
 
-    public create(x: number, y: number) {
-        this.selfx = x;
-        this.selfy = y;
+    constructor(data: {[key: string]: number}) {
+        this.selfx = data.x;
+        this.selfy = data.y;
+        this.create();
+    }
+
+    private create() {
         this.head.saveCircle(this.selfx + this.width / 2, this.selfy + this.headradius, this.headradius);
         this.head.saveStroke("black", 2);
         this.body.saveLine(
@@ -61,6 +66,14 @@ export default class Role {
         Container.addChild(this.leftFoot);
         Container.addChild(this.rightFoot);
         Role.id++;
+    }
+
+    private static get nextid(): number {
+        return Role.id++;
+    }
+
+    get uuid(): string {
+        return this.id;
     }
 
     get realX() {

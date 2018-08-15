@@ -22,7 +22,7 @@ export default class Main {
 
     constructor() {
         this.keydown = {};
-        this.role1 = new Role();
+        this.role1 = new Role({ x: 120, y: 1120});
         this.map = new Map();
         this.dragList = {};
         this.goodsList = {};
@@ -50,7 +50,6 @@ export default class Main {
 
     public createScene() {
         this.map.createMap();
-        this.role1.create(120, 1120);
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         window.addEventListener("keyup", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });

@@ -125,6 +125,11 @@ export default class Container {
         return this;
     }
 
+    public static removeChild(id: string) {
+        delete Container.elements[id];
+        return this;
+    }
+
     public static get canvasWidth() {
         return Container.mainCanvas.canvas.width;
     }

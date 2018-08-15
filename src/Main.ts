@@ -16,6 +16,7 @@ export default class Main {
     private dragingGoods: any;
     private dragList: {[key: string]: any};
     private goodsList: {[key: string]: any};
+    private shadowList: {[key: string]: any};
     private pointerX: number;
     private pointerY: number;
 
@@ -25,6 +26,7 @@ export default class Main {
         this.map = new Map();
         this.dragList = {};
         this.goodsList = {};
+        this.shadowList = {};
         this.touched = false;
         this.temp = [];
         for (let i = 0; i < Map.height; i++) {
@@ -194,13 +196,23 @@ export default class Main {
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
             Menu.goodsCanvas.canvas.style.display = "none";
-            const board = new Goods.Board();
-            board.create(
-                (event.pageX + Camera.x) / Camera.scale / Map.blockWidth,
-                (event.pageY + Camera.y) / Camera.scale / Map.blockHeight,
+            const board = new Goods.Board(
+                (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
+                (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
+                1,
             );
+            const shadow = new Goods.Board(
+                +(board.realX / Map.blockWidth).toFixed(0),
+                +(board.realY / Map.blockHeight).toFixed(0),
+                0.4,
+            );
+
+            board.shadowId = shadow.uuid;
+            shadow.addToContainer();
             board.addToContainer();
+
             this.dragList[board.uuid] = board;
+            this.shadowList[shadow.uuid] = shadow;
             this.dragingGoods = board;
         }
     }
@@ -209,8 +221,20 @@ export default class Main {
         const x: number = event.type === "mousemove" ? event.pageX : event.touches[0].pageX;
         const y: number = event.type === "mousemove" ? event.pageY : event.touches[0].pageY;
         if (this.dragingGoods !== undefined) {
-            this.dragingGoods.x += (x - this.pointerX) / Camera.scale;
-            this.dragingGoods.y += (y - this.pointerY) / Camera.scale;
+            this.dragingGoods.x += (x - this.pointerX);
+            this.dragingGoods.y += (y - this.pointerY);
+
+            const shadow = this.shadowList[this.dragingGoods.shadowId];
+            const width = Map.blockWidth;
+            const height = Map.blockHeight;
+
+            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
+
+            shadow.x = snx * Camera.scale - Camera.x;
+            shadow.y = sny * Camera.scale - Camera.y;
+
+            this.hitEdge(this.dragingGoods);
 
             this.pointerX = x;
             this.pointerY = y;
@@ -224,8 +248,14 @@ export default class Main {
 
     private dragEnd(event: any) {
         if (this.dragingGoods) {
-            this.dragingGoods.x = +(this.dragingGoods.x / 40).toFixed(0) * 40;
-            this.dragingGoods.y = +(this.dragingGoods.y / 40).toFixed(0) * 40;
+            const width = Map.blockWidth;
+            const height = Map.blockHeight;
+
+            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
+
+            this.dragingGoods.x = snx * Camera.scale - Camera.x;
+            this.dragingGoods.y = sny * Camera.scale - Camera.y;
         }
         Camera.checkRange();
         this.touched = false;
@@ -241,6 +271,21 @@ export default class Main {
         } else {
             Menu.goodsCanvas.canvas.style.display = "none";
             Menu.goodsCanvas.canvas.style.zIndex = "0";
+        }
+    }
+
+    private hitEdge(obj: {[key: string]: number}) {
+        if (obj.realX < 0) {
+            obj.realX = 0;
+        }
+        if (obj.realY < 0) {
+            obj.realY = 0;
+        }
+        if (obj.realX + obj.width > Map.width) {
+            obj.realX = Map.width - obj.width;
+        }
+        if (obj.realY + obj.height > Map.height) {
+            obj.realY = Map.height - obj.height;
         }
     }
 

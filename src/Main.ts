@@ -33,7 +33,7 @@ export default class Main {
     }
 
     public createScene() {
-        this.map.createMap();
+        this.map.createMap(2000, 1600, 40, 40);
         this.createRole();
         this.update();
 

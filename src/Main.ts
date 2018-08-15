@@ -6,8 +6,10 @@ import Menu from "./Menu";
 import Role from "./Role";
 
 export default class Main {
-    public keydown: {[key: string]: boolean};
-    public roles: {[key: string]: Role};
+    private dirx: number[]; // left, up, right, down
+    private diry: number[]; // left, up, right, down
+    private keydown: {[key: string]: boolean};
+    private roles: {[key: string]: Role};
     private selfId: string;
     private map: Map;
     private touched: boolean;
@@ -19,6 +21,8 @@ export default class Main {
     private pointerY: number;
 
     constructor() {
+        this.dirx = [-1, 0, 1, 0]; // left, up, right, down
+        this.diry = [0, -1, 0, 1]; // left, up, right, down
         this.map = new Map();
         this.keydown = {};
         this.roles = {};
@@ -63,16 +67,16 @@ export default class Main {
 
     private update() {
         if (this.keydown.KeyA) {
-            this.roleMove(this.selfId, "left");
-        }
-        if (this.keydown.KeyS) {
-            this.roleMove(this.selfId, "down");
+            this.roleMove(this.selfId, 0);
         }
         if (this.keydown.KeyW) {
-            this.roleMove(this.selfId, "up");
+            this.roleMove(this.selfId, 1);
         }
         if (this.keydown.KeyD) {
-            this.roleMove(this.selfId, "right");
+            this.roleMove(this.selfId, 2);
+        }
+        if (this.keydown.KeyS) {
+            this.roleMove(this.selfId, 3);
         }
         requestAnimationFrame(() => this.update());
     }
@@ -89,34 +93,14 @@ export default class Main {
             }
         } else if (event.type === "keyup") {
             this.keydown[event.code] = false;
-            // switch (event.code) {
-            //     case "KeyQ":
-            //         // this.menuController();
-            //         break;
-            //     default:
-            //         break;
-            // }
         }
 
     }
-    private roleMove(id: string, dir: string) {
-        switch (dir) {
-            case "left":
-                this.roles[id].realX -= this.roles[id].moveStep;
-                break;
-            case "right":
-                this.roles[id].realX += this.roles[id].moveStep;
-                break;
-            case "up":
-                this.roles[id].realY -= this.roles[id].moveStep;
-                break;
-            case "down":
-                this.roles[id].realY += this.roles[id].moveStep;
-                break;
-            default:
-                break;
-        }
-        this.hitEdge(this.roles[id]);
+    private roleMove(id: string, dir: number) {
+        this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
+        this.roles[id].realY += this.roles[id].moveStep * this.diry[dir];
+
+        this.collision(this.roles[id], true, dir);
     }
 
     private dragBefore(event: any) {
@@ -167,17 +151,17 @@ export default class Main {
             this.dragingGoods.x += (x - this.pointerX);
             this.dragingGoods.y += (y - this.pointerY);
 
-            const shadow = this.shadowList[this.dragingGoods.shadowId];
-            const width = Map.blockWidth;
-            const height = Map.blockHeight;
+            if (!this.collision(this.dragingGoods, false, null)) {
+                const shadow = this.shadowList[this.dragingGoods.shadowId];
+                const width = Map.blockWidth;
+                const height = Map.blockHeight;
 
-            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
-            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
+                const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+                const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
 
-            shadow.x = snx * Camera.scale - Camera.x;
-            shadow.y = sny * Camera.scale - Camera.y;
-
-            this.hitEdge(this.dragingGoods);
+                shadow.x = snx * Camera.scale - Camera.x;
+                shadow.y = sny * Camera.scale - Camera.y;
+            }
 
             this.pointerX = x;
             this.pointerY = y;
@@ -191,14 +175,10 @@ export default class Main {
 
     private dragEnd(event: any) {
         if (this.dragingGoods) {
-            const width = Map.blockWidth;
-            const height = Map.blockHeight;
+            const shadow = this.shadowList[this.dragingGoods.shadowId];
 
-            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
-            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
-
-            this.dragingGoods.x = snx * Camera.scale - Camera.x;
-            this.dragingGoods.y = sny * Camera.scale - Camera.y;
+            this.dragingGoods.x = shadow.realX * Camera.scale - Camera.x;
+            this.dragingGoods.y = shadow.realY * Camera.scale - Camera.y;
         }
         Camera.checkRange();
         this.touched = false;
@@ -217,7 +197,8 @@ export default class Main {
         }
     }
 
-    private hitEdge(obj: {[key: string]: any | Role}) {
+    private collision(obj: {[key: string]: any | Role}, correction: boolean, dir: number): boolean {
+        let judgement: boolean = false;
         if (obj.realX <= 0) {
             obj.realX = 0;
         }
@@ -230,6 +211,40 @@ export default class Main {
         if (obj.realY + obj.height >= Map.height) {
             obj.realY = Map.height - obj.height - 1;
         }
+
+        for (const id in this.dragList) {
+            if (this.dragList[id] && id !== obj.uuid) {
+                const goods = this.dragList[id];
+                if (
+                    obj.left <= goods.right &&
+                    obj.right >= goods.left &&
+                    obj.top <= goods.bottom &&
+                    obj.bottom >= goods.top
+                ) {
+                    if (correction) {
+                        this.correct(obj, goods, dir);
+                    }
+                    judgement = true;
+                    break;
+                }
+            }
+        }
+        return judgement;
+    }
+
+    private correct(
+        host: {[key: string]: any | Role},
+        guest: {[key: string]: any | Role},
+        dir: number,
+    ) {
+        const value = [
+            host.left - guest.right - 1,
+            host.top - guest.bottom - 1,
+            host.right - guest.left + 1,
+            host.bottom - guest.top + 1,
+        ];
+        host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
+        host.realY -= (value[dir] * Math.abs(this.diry[dir]));
     }
 
     private addToGoods(goods: any) {

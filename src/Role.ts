@@ -116,4 +116,20 @@ export default class Role {
         this.rightFoot.position[0].y += disy;
         this.rightFoot.position[1].y += disy;
     }
+
+    get left(): number {
+        return this.realX;
+    }
+
+    get right(): number {
+        return this.realX + this.width - 1;
+    }
+
+    get top(): number {
+        return this.realY;
+    }
+
+    get bottom(): number {
+        return this.realY + this.height - 1;
+    }
 }

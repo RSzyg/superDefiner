@@ -172,4 +172,20 @@ export default class Board {
     get height(): number {
         return this.heightCoef * Map.blockHeight;
     }
+
+    get left(): number {
+        return this.realX;
+    }
+
+    get right(): number {
+        return this.realX + this.width - 1;
+    }
+
+    get top(): number {
+        return this.realY;
+    }
+
+    get bottom(): number {
+        return this.realY + this.height - 1;
+    }
 }

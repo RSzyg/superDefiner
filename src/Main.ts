@@ -6,7 +6,11 @@ import Menu from "./Menu";
 import Role from "./Role";
 
 export default class Main {
+
+    public keydown: {[key: string]: boolean};
     public role1: Role;
+    public boot: number = 5;
+    public temp: number[][];
     private map: Map;
     private touched: boolean;
     private dragingGoods: any;
@@ -16,17 +20,37 @@ export default class Main {
     private pointerY: number;
 
     constructor() {
+        this.keydown = {};
         this.role1 = new Role();
         this.map = new Map();
         this.dragList = {};
         this.goodsList = {};
         this.touched = false;
+        this.temp = [];
+        for (let i = 0; i < Map.height; i++) {
+            this.temp[i] = new Array();
+        }
+        // for (let i = 0; i < 40; i++) {
+        //     for (let j = 0; j < 50; j++) {
+        //         for (let k = 0; k < Map.blockHeight; k++) {
+        //             for (let l = 0; l < Map.blockWidth; l++) {
+        //                 this.temp[i * Map.blockHeight + k][j * Map.blockWidth + l] = (+Map.main[i][j]);
+        //             }
+        //         }
+        //     }
+        // }
+        for ( let i = 0; i < Map.height; i ++ ) {
+            for ( let j = 0; j < Map.width; j++) {
+                this.temp[i][j] = (+Map.main[Math.floor(i / 40)][Math.floor(j / 40)]);
+            }
+        }
     }
 
     public createScene() {
         this.map.createMap();
-        this.role1.create(3, 28);
+        this.role1.create(120, 1120);
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
+        window.addEventListener("keyup", (event) => { this.keyboardController(event); });
         Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
         Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
@@ -47,43 +71,107 @@ export default class Main {
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
     }
 
-    private keyboardController(event: KeyboardEvent) {
-        switch (event.code) {
-            case "KeyQ":
-                this.menuController();
-                break;
-            case "keyA":
-                this.RoleMoveLeft();
-                break;
-            case "keyW":
-                this.RoleMoveUp();
-                break;
-            case "keyD":
-                this.RoleMoveRight();
-                break;
-            case "keyS":
-                this.RoleMoveDown();
-                break;
-            default:
-                break;
+    public render() {
+        if (this.keydown.KeyA) {
+            this.RoleMoveLeft();
         }
+        if (this.keydown.KeyS) {
+            this.RoleMoveDown();
+        }
+        if (this.keydown.KeyW) {
+            this.RoleMoveUp();
+        }
+        if (this.keydown.KeyD) {
+            this.RoleMoveRight();
+        }
+        requestAnimationFrame(() => this.render());
+    }
+
+    private keyboardController(event: KeyboardEvent) {
+        if (event.type === "keydown") {
+            this.keydown[event.code] = true;
+            switch (event.code) {
+                case "KeyQ":
+                    this.menuController();
+                    break;
+                default:
+                    break;
+            }
+        } else if (event.type === "keyup") {
+            this.keydown[event.code] = false;
+            // switch (event.code) {
+            //     case "KeyQ":
+            //         // this.menuController();
+            //         break;
+            //     default:
+            //         break;
+            // }
+        }
+
     }
 
     private RoleMoveLeft() {
-        this.role1.x -= 10 / Camera.scale;
-        console.log(this.role1.x);
+        if (
+            this.temp[this.role1.y][this.role1.x - this.boot] !== 1 &&
+            this.temp[this.role1.y + this.role1.height][this.role1.x - this.boot] !== 1 &&
+            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x - this.boot] !== 1
+            ) {
+            this.role1.x = -5;
+        } else {
+            while (this.temp[this.role1.y][this.role1.x - 1] !== 1 &&
+                this.temp[this.role1.y + this.role1.height][this.role1.x - 1] !== 1 &&
+                this.temp[this.role1.y + this.role1.bodyheight][this.role1.x - 1] !== 1
+            ) {
+                this.role1.x = -1;
+            }
+        }
     }
 
     private RoleMoveRight() {
-        this.role1.x += 10 / Camera.scale;
+        if (
+            this.temp[this.role1.y][this.role1.x + this.role1.width + this.boot] !== 1 &&
+            this.temp[this.role1.y + this.role1.height][this.role1.x + this.role1.width + this.boot] !== 1 &&
+            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x + this.role1.width + this.boot] !== 1
+        ) {
+            this.role1.x = 5;
+        } else {
+            while (this.temp[this.role1.y][this.role1.x + this.role1.width + 1] !== 1 &&
+            this.temp[this.role1.y + this.role1.height][this.role1.x + this.role1.width + 1] !== 1 &&
+            this.temp[this.role1.y + this.role1.bodyheight][this.role1.x + this.role1.width + 1] !== 1
+            ) {
+                this.role1.x = 1;
+            }
+        }
     }
 
     private RoleMoveUp() {
-        this.role1.y -= 10 / Camera.scale;
+        if (
+            this.temp[this.role1.y - this.boot][this.role1.x] !== 1 &&
+            this.temp[this.role1.y - this.boot][this.role1.x + this.role1.width] !== 1
+        ) {
+            this.role1.y = -5;
+        } else {
+            while (this.temp[this.role1.y - 1][this.role1.x] !== 1 &&
+                this.temp[this.role1.y - 1][this.role1.x + this.role1.width] !== 1
+            ) {
+                this.role1.y = -1;
+            }
+        }
     }
 
     private RoleMoveDown() {
-        this.role1.y += 10 / Camera.scale;
+        if (
+            this.temp[this.role1.y + this.role1.height + this.boot][this.role1.x] !== 1 &&
+            this.temp[this.role1.y + this.role1.height + this.boot][this.role1.x + this.role1.width] !== 1
+        ) {
+            this.role1.y = 5;
+        } else {
+            while (this.temp[this.role1.y + this.role1.height + 1][this.role1.x + this.role1.width] !== 1 &&
+                this.temp[this.role1.y + this.role1.height + 1][this.role1.x] !== 1
+            ) {
+                this.role1.y = 1;
+            }
+        }
     }
 
     private dragBefore(event: any) {
@@ -168,4 +256,5 @@ export default class Main {
         }
         Camera.checkRange();
     }
+
 }

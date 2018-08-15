@@ -28,10 +28,10 @@ export default class Main {
         this.goodsList = {};
         this.shadowList = {};
         this.touched = false;
-        this.temp = [];
-        for (let i = 0; i < Map.height; i++) {
-            this.temp[i] = new Array();
-        }
+        // this.temp = [];
+        // for (let i = 0; i < this.map.height; i++) {
+        //     this.temp[i] = new Array();
+        // }
         // for (let i = 0; i < 40; i++) {
         //     for (let j = 0; j < 50; j++) {
         //         for (let k = 0; k < Map.blockHeight; k++) {
@@ -41,15 +41,15 @@ export default class Main {
         //         }
         //     }
         // }
-        for ( let i = 0; i < Map.height; i ++ ) {
-            for ( let j = 0; j < Map.width; j++) {
-                this.temp[i][j] = (+Map.main[Math.floor(i / 40)][Math.floor(j / 40)]);
-            }
-        }
+        // for ( let i = 0; i < this.map.height; i ++ ) {
+        //     for ( let j = 0; j < this.map.width; j++) {
+        //         this.temp[i][j] = (+this.map.main[Math.floor(i / 40)][Math.floor(j / 40)]);
+        //     }
+        // }
     }
 
     public createScene() {
-        this.map.createMap();
+        this.map.createMap(2000, 1600, 40, 40);
         this.role1.create(120, 1120);
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         window.addEventListener("keyup", (event) => { this.keyboardController(event); });

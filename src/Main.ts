@@ -122,7 +122,7 @@ export default class Main {
                         this.temp[this.role1.realY + this.role1.height][this.role1.realX - this.boot] !== 1 &&
                         this.temp[this.role1.realY + this.role1.bodyheight][this.role1.realX - this.boot] !== 1
                         ) {
-                        this.role1.realX += -5;
+                        this.role1.realX += -this.boot;
                     } else {
                         while (
                             this.temp[this.role1.realY]
@@ -138,8 +138,8 @@ export default class Main {
                 }
                 break;
             case "right":
-                if (this.role1.realX + this.role1.width + this.boot > Map.width) {
-                    return;
+                if (this.role1.realX + this.role1.width + this.boot >= Map.width) {
+                    this.role1.realX += this.boot;
                 } else {
                     if (
                         this.temp[this.role1.realY][this.role1.realX + this.role1.width + this.boot] !== 1 &&
@@ -148,7 +148,7 @@ export default class Main {
                         this.temp[this.role1.realY + this.role1.bodyheight]
                         [this.role1.realX + this.role1.width + this.boot] !== 1
                     ) {
-                        this.role1.realX += 5;
+                        this.role1.realX += this.boot;
                     } else {
                         while (
                             this.temp[this.role1.realY]
@@ -171,7 +171,7 @@ export default class Main {
                         this.temp[this.role1.realY - this.boot][this.role1.realX] !== 1 &&
                         this.temp[this.role1.realY - this.boot][this.role1.realX + this.role1.width] !== 1
                     ) {
-                        this.role1.realY += -5;
+                        this.role1.realY += -this.boot;
                     } else {
                         while (
                             this.temp[this.role1.realY - 1]
@@ -185,15 +185,15 @@ export default class Main {
                 }
                 break;
             case "down":
-                if (this.role1.realY + this.role1.height + this.boot > Map.height) {
-                    return;
+                if (this.role1.realY + this.role1.height + this.boot >= Map.height) {
+                    this.role1.realY += this.boot;
                 } else {
                     if (
                         this.temp[this.role1.realY + this.role1.height + this.boot][this.role1.realX] !== 1 &&
                         this.temp[this.role1.realY + this.role1.height + this.boot]
                         [this.role1.realX + this.role1.width] !== 1
                     ) {
-                        this.role1.realY += 5;
+                        this.role1.realY += this.boot;
                     } else {
                         while (
                             this.temp[this.role1.realY + this.role1.height + 1]
@@ -318,10 +318,10 @@ export default class Main {
             obj.realY = 0;
         }
         if (obj.realX + obj.width >= Map.width) {
-            obj.realX = Map.width - obj.width;
+            obj.realX = Map.width - obj.width - 1;
         }
         if (obj.realY + obj.height >= Map.height) {
-            obj.realY = Map.height - obj.height;
+            obj.realY = Map.height - obj.height - 1;
         }
     }
 

@@ -7,9 +7,10 @@ export default class Role {
     public static id = 0;
     public roleId: number = Role.id;
     public width: number = 40;
-    public height: number = 65;
+    public height: number = 70;
     public headradius: number = 10;
-    public bodyheight: number = 30;
+    public neckheight: number = 5;
+    public bodyheight: number = 35;
     public footheight: number = 15;
     public handheight: number = 15;
     public footwidth: number = 20;
@@ -34,13 +35,13 @@ export default class Role {
         );
         this.body.saveStroke("black", 2);
         this.leftHand.saveLine(
-            {x: this.selfx + this.width / 2, y: this.selfy + 2 * this.headradius},
-            {x: this.selfx, y: this.selfy + 2 * this.headradius + this.handheight},
+            {x: this.selfx + this.width / 2, y: this.selfy + 2 * this.headradius + this.neckheight},
+            {x: this.selfx, y: this.selfy + 2 * this.headradius + this.handheight + this.neckheight},
         );
         this.leftHand.saveStroke("black", 2);
         this.rightHand.saveLine(
-            {x: this.selfx + this.width / 2, y: this.selfy + 2 * this.headradius},
-            {x: this.selfx + this.width, y: this.selfy + 2 * this.headradius + this.handheight},
+            {x: this.selfx + this.width / 2, y: this.selfy + 2 * this.headradius + this.neckheight},
+            {x: this.selfx + this.width, y: this.selfy + 2 * this.headradius + this.handheight + this.neckheight},
         );
         this.rightHand.saveStroke("black", 2);
         this.leftFoot.saveLine(

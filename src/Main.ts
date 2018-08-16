@@ -172,8 +172,8 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
-        const shadow = this.shadowList[this.dragingGoods.shadowId];
         if (this.dragingGoods) {
+            const shadow = this.shadowList[this.dragingGoods.shadowId];
             if (this.collision(shadow, false, null)) {
                 shadow.removeFromContainer();
                 this.dragingGoods.removeFromContainer();

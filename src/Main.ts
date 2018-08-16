@@ -159,6 +159,7 @@ export default class Main {
             if (this.dragList[id]) {
                 const goods = this.dragList[id];
                 if (goods.clickInMap(this.pointerX, this.pointerY)) {
+                    this.map.showGrid();
                     this.dragingGoods = goods;
                     return;
                 }
@@ -171,6 +172,7 @@ export default class Main {
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
             Menu.goodsCanvas.canvas.style.display = "none";
+            this.map.showGrid();
             const board = new Goods.Board(
                 (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
                 (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
@@ -222,6 +224,7 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
+        this.map.hideGrid();
         if (this.dragingGoods) {
             const shadow = this.shadowList[this.dragingGoods.shadowId];
             if (this.collision(shadow, false, null)) {

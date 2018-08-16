@@ -32,7 +32,7 @@ export default class Menu {
     public static render() {
         Menu.goodsCanvas.canvas.height = Menu.goodsCanvas.canvas.height;
         for (const id in Menu.elements) {
-            if (Menu.elements[id]) {
+            if (Menu.elements[id] && Menu.elements[id].display) {
                 const shp = Menu.elements[id];
                 switch (shp.type) {
                     case "rect":

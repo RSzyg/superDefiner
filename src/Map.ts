@@ -14,7 +14,7 @@ export default class Map {
         Map.height = height;
         Map.blockWidth = blockWidth;
         Map.blockHeight = blockHeight;
-        for ( let i = 30; i < 40; i++) {
+        for (let i = 30; i < 40; i++) {
             for ( let j = 0; j < 10; j++) {
                 const block = new Shape();
                 block.saveRect(
@@ -27,7 +27,7 @@ export default class Map {
                 this.block[block.uuid] = block;
             }
         }
-        for ( let i = 30; i < 40; i++) {
+        for (let i = 30; i < 40; i++) {
             for ( let j = 40; j < 50; j++) {
                 const block = new Shape();
                 block.saveRect(
@@ -40,7 +40,7 @@ export default class Map {
                 this.block[block.uuid] = block;
             }
         }
-        for ( let i = 20; i < 30; i++) {
+        for (let i = 20; i < 30; i++) {
                 const block = new Shape();
                 block.saveRect(
                     i * Map.blockWidth,
@@ -51,8 +51,10 @@ export default class Map {
                 Container.addChild(block);
                 this.block[block.uuid] = block;
         }
+
         for (let i = 0; i < 41; i++) {
             const grid = new Shape();
+            grid.display = false;
             grid.saveLine(
                 { x: 0, y: i * Map.blockHeight },
                 { x: Map.width, y: i * Map.blockHeight },
@@ -62,6 +64,7 @@ export default class Map {
         }
         for (let i = 0; i < 51; i++) {
             const grid = new Shape();
+            grid.display = false;
             grid.saveLine(
                 {x: i * Map.blockWidth, y: 0},
                 {x: i * Map.blockWidth, y: Map.height},
@@ -70,5 +73,21 @@ export default class Map {
             this.grid[grid.uuid] = grid;
         }
         return this;
+    }
+
+    public showGrid() {
+        for (const id in this.grid) {
+            if (this.grid[id]) {
+                this.grid[id].display = true;
+            }
+        }
+    }
+
+    public hideGrid() {
+        for (const id in this.grid) {
+            if (this.grid[id]) {
+                this.grid[id].display = false;
+            }
+        }
     }
 }

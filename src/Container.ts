@@ -16,7 +16,7 @@ export default class Container {
     public static render() {
         Container.mainCanvas.canvas.height = Container.mainCanvas.canvas.height;
         for (const id in Container.elements) {
-            if (Container.elements[id]) {
+            if (Container.elements[id] && Container.elements[id].display) {
                 const shp = Container.elements[id];
                 switch (shp.type) {
                     case "rect":

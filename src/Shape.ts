@@ -72,4 +72,16 @@ export default class Shape {
     get uuid(): string {
         return this.id;
     }
+    get left() {
+        return this.position[0].x;
+    }
+    get top() {
+        return this.position[0].y;
+    }
+    get right() {
+        return this.position[0].x + this.width;
+    }
+    get bottom() {
+        return this.position[0].y + this.height;
+    }
 }

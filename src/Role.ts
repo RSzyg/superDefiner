@@ -66,7 +66,7 @@ export default class Role {
         Container.addChild(this.rightHand);
         Container.addChild(this.leftFoot);
         Container.addChild(this.rightFoot);
-        Role.id++;
+        this.id = "role" + Role.nextid;
     }
 
     private static get nextid(): number {

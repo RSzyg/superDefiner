@@ -201,17 +201,23 @@ export default class Main {
             this.dragingGoods.x += (x - this.pointerX);
             this.dragingGoods.y += (y - this.pointerY);
 
-            if (!this.collision(this.dragingGoods, false, null)) {
-                const shadow = this.shadowList[this.dragingGoods.shadowId];
-                const width = Map.blockWidth;
-                const height = Map.blockHeight;
+            const tempX = this.dragingGoods.realX;
+            const tempY = this.dragingGoods.realY;
 
-                const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
-                const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
+            this.collision(this.dragingGoods, true, null);
 
-                shadow.x = snx * Camera.scale - Camera.x;
-                shadow.y = sny * Camera.scale - Camera.y;
-            }
+            const shadow = this.shadowList[this.dragingGoods.shadowId];
+            const width = Map.blockWidth;
+            const height = Map.blockHeight;
+
+            const snx = +(this.dragingGoods.realX / width).toFixed(0) * width;
+            const sny = +(this.dragingGoods.realY / height).toFixed(0) * height;
+
+            shadow.x = snx * Camera.scale - Camera.x;
+            shadow.y = sny * Camera.scale - Camera.y;
+
+            this.dragingGoods.realX = tempX;
+            this.dragingGoods.realY = tempY;
 
             this.pointerX = x;
             this.pointerY = y;
@@ -343,8 +349,30 @@ export default class Main {
             host.right - guest.left + 1,
             host.bottom - guest.top + 1,
         ];
-        host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
-        host.realY -= (value[dir] * Math.abs(this.diry[dir]));
+        if (dir === null) {
+            let dx: number;
+            let dy: number;
+            if (host.top + host.height / 2 < guest.top + guest.height / 2) {
+                dy = host.bottom - guest.top + 1;
+            } else {
+                dy = host.top - guest.bottom - 1;
+            }
+
+            if (host.left + host.width / 2 < guest.left + guest.height / 2) {
+                dx = host.right - guest.left + 1;
+            } else {
+                dx = host.left - guest.right - 1;
+            }
+
+            if (Math.abs(dy) > Math.abs(dx)) {
+                host.realX -= dx;
+            } else {
+                host.realY -= dy;
+            }
+        } else {
+            host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
+            host.realY -= (value[dir] * Math.abs(this.diry[dir]));
+        }
     }
 
     private zoom(event: MouseWheelEvent) {

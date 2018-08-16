@@ -68,13 +68,29 @@ export default class Main {
             this.roleMove(this.selfId, 0);
         }
         if (this.keydown.KeyW) {
+            if (this.collision(this.roles[this.selfId], true, 3)) {
+                this.roles[this.selfId].inAir = true;
+            }
+        }
+        if (this.roles[this.selfId].inAir) {
             this.roleMove(this.selfId, 1);
+            this.roles[this.selfId].V += this.roles[this.selfId].G * 0.2;
+            this.roles[this.selfId].freestep =
+            this.roles[this.selfId].startV * this.roles[this.selfId].time +
+            0.5 * this.roles[this.selfId].G * this.roles[this.selfId].time * this.roles[this.selfId].time -
+            this.roles[this.selfId].road;
+            this.roles[this.selfId].road =
+            this.roles[this.selfId].startV * this.roles[this.selfId].time +
+            0.5 * this.roles[this.selfId].G * this.roles[this.selfId].time * this.roles[this.selfId].time;
+            this.roles[this.selfId].time += 0.2;
         }
         if (this.keydown.KeyD) {
             this.roleMove(this.selfId, 2);
         }
-        if (this.keydown.KeyS) {
-            this.roleMove(this.selfId, 3);
+        if (!this.roles[this.selfId].inAir) {
+            if (!this.collision(this.roles[this.selfId], true, 3)) {
+                this.roleMove(this.selfId, 3);
+            }
         }
         requestAnimationFrame(() => this.update());
     }
@@ -86,18 +102,34 @@ export default class Main {
                 case "KeyQ":
                     this.menuController();
                     break;
+                case "KeyW":
+                    this.roles[this.selfId].realY += 1;
+                    if (this.roles[this.selfId].inAir && !this.roles[this.selfId].repeatInAir) {
+                        this.roles[this.selfId].repeatInAir = true;
+                        if (this.roles[this.selfId].repeatInAir) {
+                            this.roles[this.selfId].V = 0;
+                            this.roles[this.selfId].time = 0;
+                            this.roles[this.selfId].road = 0;
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
         } else if (event.type === "keyup") {
             this.keydown[event.code] = false;
         }
-
     }
     private roleMove(id: string, dir: number) {
         this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
-        this.roles[id].realY += this.roles[id].moveStep * this.diry[dir];
-
+        if (dir === 1) {
+            this.roles[id].realY += -this.roles[this.selfId].freestep;
+        } else {
+            this.roles[id].realY += this.roles[this.selfId].moveStep * this.diry[dir];
+        }
+        if (this.roles[id].V < 0) {
+            this.collision(this.roles[id], true, 3);
+        }
         this.collision(this.roles[id], true, dir);
     }
 
@@ -200,7 +232,10 @@ export default class Main {
         }
     }
 
-    private collision(obj: {[key: string]: any | Role}, correction: boolean, dir: number): boolean {
+    private collision(
+        obj: {[key: string]: any | Role},
+        correction: boolean, dir: number,
+    ): boolean {
         let judgement: boolean = false;
         if (obj.realX <= 0) {
             obj.realX = 0;
@@ -222,15 +257,7 @@ export default class Main {
                 this.dragList[id].shadowId !== obj.uuid
             ) {
                 const goods = this.dragList[id];
-                if (
-                    !(obj.left > goods.right ||
-                    obj.right < goods.left ||
-                    obj.top > goods.bottom ||
-                    obj.bottom < goods.top)
-                ) {
-                    if (correction) {
-                        this.correct(obj, goods, dir);
-                    }
+                if (this.judgecillsion (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
@@ -241,16 +268,8 @@ export default class Main {
                 this.map.block[id] &&
                 id !== obj.uuid
             ) {
-                const block = this.map.block[id];
-                if (
-                    !(obj.left > block.right ||
-                    obj.right < block.left ||
-                    obj.top > block.bottom ||
-                    obj.bottom < block.top)
-                ) {
-                    if (correction) {
-                        this.correct(obj, block, dir);
-                    }
+                const goods = this.map.block[id];
+                if (this.judgecillsion (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
@@ -261,20 +280,33 @@ export default class Main {
                 this.roles[id] &&
                 id !== obj.uuid
             ) {
-                const role = this.roles[id];
-                if (
-                    !(obj.left > role.right ||
-                    obj.right < role.left ||
-                    obj.top > role.bottom ||
-                    obj.bottom < role.top)
-                ) {
-                    if (correction) {
-                        this.correct(obj, role, dir);
-                    }
+                const goods = this.roles[id];
+                if (this.judgecillsion (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
             }
+        }
+        return judgement;
+    }
+
+    private judgecillsion(
+        judgement: boolean,
+        obj: {[key: string]: any | Role},
+        goods: {[key: string]: any | Role},
+        correction: boolean,
+        dir: number,
+    ): boolean {
+        if (
+            !(obj.left > goods.right ||
+            obj.right < goods.left ||
+            obj.top > goods.bottom ||
+            obj.bottom < goods.top)
+        ) {
+            if (correction) {
+                this.correct(obj, goods, dir);
+            }
+            judgement = true;
         }
         return judgement;
     }
@@ -292,6 +324,13 @@ export default class Main {
         ];
         host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
         host.realY -= (value[dir] * Math.abs(this.diry[dir]));
+        if (dir === 3) {
+            this.roles[this.selfId].repeatInAir = false;
+            this.roles[this.selfId].inAir = false;
+            this.roles[this.selfId].V = 0;
+            this.roles[this.selfId].time = 0;
+            this.roles[this.selfId].road = 0;
+        }
     }
 
     private zoom(event: MouseWheelEvent) {

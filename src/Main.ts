@@ -18,6 +18,7 @@ export default class Main {
     private shadowList: {[key: string]: any};
     private pointerX: number;
     private pointerY: number;
+    private gameMode: string;
 
     constructor() {
         this.dirx = [-1, 0, 1, 0]; // left, up, right, down
@@ -28,31 +29,66 @@ export default class Main {
         this.dragList = {};
         this.shadowList = {};
         this.touched = false;
+        this.gameMode = "edit";
     }
 
     public createScene() {
         this.map.createMap(2000, 1600, 40, 40);
         this.createRole();
+
+        Camera.centerX = this.roles[this.selfId].realX + this.roles[this.selfId].width / 2;
+        Camera.centerY = this.roles[this.selfId].realY + this.roles[this.selfId].height / 2;
+        Camera.checkRange();
+
         this.update();
         Menu.create();
+
         window.addEventListener("keydown", (event) => { this.keyboardController(event); });
         window.addEventListener("keyup", (event) => { this.keyboardController(event); });
-        Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => { this.dragGoodsBefore(event); });
-        Container.mainCanvas.canvas.addEventListener("mousedown", (event) => { this.dragBefore(event); });
-        Container.mainCanvas.canvas.addEventListener("touchstart", (event) => { this.dragBefore(event); });
+        Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragGoodsBefore(event);
+            }
+        });
+        Container.mainCanvas.canvas.addEventListener("mousedown", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragBefore(event);
+            }
+        });
+        Container.mainCanvas.canvas.addEventListener("touchstart", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragBefore(event);
+            }
+        });
         Container.mainCanvas.canvas.addEventListener("mousemove", (event) => {
-            if (this.dragingGoods !== undefined || this.touched) {
-                this.dragMove(event);
+            if (this.gameMode === "edit") {
+                if (this.dragingGoods !== undefined || this.touched) {
+                    this.dragMove(event);
+                }
             }
         });
         Container.mainCanvas.canvas.addEventListener("touchmove", (event) => {
-            if (this.dragingGoods !== undefined || this.touched) {
-                this.dragMove(event);
+            if (this.gameMode === "edit") {
+                if (this.dragingGoods !== undefined || this.touched) {
+                    this.dragMove(event);
+                }
             }
         });
-        Container.mainCanvas.canvas.addEventListener("mouseup", (event) => { this.dragEnd(event); });
-        Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {this.dragEnd(event); });
-        Container.mainCanvas.canvas.addEventListener("touchend", (event) => { this.dragEnd(event); });
+        Container.mainCanvas.canvas.addEventListener("mouseup", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragEnd(event);
+            }
+        });
+        Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragEnd(event);
+            }
+        });
+        Container.mainCanvas.canvas.addEventListener("touchend", (event) => {
+            if (this.gameMode === "edit") {
+                this.dragEnd(event);
+            }
+        });
 
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
     }
@@ -64,6 +100,12 @@ export default class Main {
     }
 
     private update() {
+        if (this.gameMode === "start") {
+            Camera.centerX = this.roles[this.selfId].realX + this.roles[this.selfId].width / 2;
+            Camera.centerY = this.roles[this.selfId].realY + this.roles[this.selfId].height / 2;
+            Camera.checkRange();
+        }
+
         if (this.keydown.KeyA) {
             this.roleMove(this.selfId, 0);
         }
@@ -84,8 +126,16 @@ export default class Main {
             this.keydown[event.code] = true;
             switch (event.code) {
                 case "KeyQ":
-                    this.menuController();
+                    if (this.gameMode === "edit") {
+                        this.menuController();
+                    }
                     break;
+                case "KeyE":
+                    if (this.gameMode === "edit") {
+                        this.gameMode = "start";
+                    } else if (this.gameMode === "start") {
+                        this.gameMode = "edit";
+                    }
                 default:
                     break;
             }

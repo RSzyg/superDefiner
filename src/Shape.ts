@@ -79,9 +79,9 @@ export default class Shape {
         return this.position[0].y;
     }
     get right() {
-        return this.position[0].x + this.width;
+        return this.position[0].x + this.width - 1;
     }
     get bottom() {
-        return this.position[0].y + this.height;
+        return this.position[0].y + this.height - 1;
     }
 }

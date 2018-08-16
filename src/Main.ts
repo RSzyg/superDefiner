@@ -172,8 +172,8 @@ export default class Main {
     }
 
     private dragEnd(event: any) {
-        const shadow = this.shadowList[this.dragingGoods.shadowId];
         if (this.dragingGoods) {
+            const shadow = this.shadowList[this.dragingGoods.shadowId];
             if (this.collision(shadow, false, null)) {
                 shadow.removeFromContainer();
                 this.dragingGoods.removeFromContainer();
@@ -230,6 +230,46 @@ export default class Main {
                 ) {
                     if (correction) {
                         this.correct(obj, goods, dir);
+                    }
+                    judgement = true;
+                    break;
+                }
+            }
+        }
+        for (const id in this.map.block) {
+            if (
+                this.map.block[id] &&
+                id !== obj.uuid
+            ) {
+                const block = this.map.block[id];
+                if (
+                    !(obj.left > block.right ||
+                    obj.right < block.left ||
+                    obj.top > block.bottom ||
+                    obj.bottom < block.top)
+                ) {
+                    if (correction) {
+                        this.correct(obj, block, dir);
+                    }
+                    judgement = true;
+                    break;
+                }
+            }
+        }
+        for (const id in this.roles) {
+            if (
+                this.roles[id] &&
+                id !== obj.uuid
+            ) {
+                const role = this.roles[id];
+                if (
+                    !(obj.left > role.right ||
+                    obj.right < role.left ||
+                    obj.top > role.bottom ||
+                    obj.bottom < role.top)
+                ) {
+                    if (correction) {
+                        this.correct(obj, role, dir);
                     }
                     judgement = true;
                     break;

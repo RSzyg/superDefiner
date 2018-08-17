@@ -125,12 +125,14 @@ export default class Main {
             }
         } else {
             this.roles[this.selfId].realY++;
-            if (!this.collide(this.roles[this.selfId], true, 3)) {
+            if (!this.collide(this.roles[this.selfId], false, 3)) {
                 this.roles[this.selfId].inAir = true;
                 this.roles[this.selfId].realY--;
                 this.roles[this.selfId].startY = this.roles[this.selfId].realY;
                 this.roles[this.selfId].startTime = Date.now();
                 this.roles[this.selfId].initSpeed = 0;
+            } else {
+                this.roles[this.selfId].realY--;
             }
         }
 
@@ -173,7 +175,6 @@ export default class Main {
     private keyboardController(event: KeyboardEvent) {
         if (event.type === "keydown") {
             this.keydown[event.code] = true;
-            console.log(this.keydown[event.code], this.keycount[event.code]);
             switch (event.code) {
                 case "KeyQ":
                     if (this.gameMode === "edit") {
@@ -414,11 +415,6 @@ export default class Main {
             host.right - guest.left + 1,
             host.bottom - guest.top + 1,
         ];
-        if (dir === 3) {
-            if (host.inAir) {
-                host.inAir = false;
-            }
-        }
         if (dir === null) {
             let dx: number;
             let dy: number;
@@ -442,6 +438,15 @@ export default class Main {
         } else {
             host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
             host.realY -= (value[dir] * Math.abs(this.diry[dir]));
+        }
+        if (dir === 1) {
+            this.roles[this.selfId].startY = this.roles[this.selfId].realY;
+            this.roles[this.selfId].startTime = Date.now();
+            this.roles[this.selfId].initSpeed = -1;
+        } else if (dir === 3) {
+            if (host.inAir) {
+                host.inAir = false;
+            }
         }
     }
 

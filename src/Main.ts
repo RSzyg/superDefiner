@@ -9,7 +9,8 @@ export default class Main {
     private dirx: number[]; // left, up, right, down
     private diry: number[]; // left, up, right, down
     private keydown: {[key: string]: boolean};
-    private keycount: {[key: string]: number};
+    private keydownCount: {[key: string]: number};
+    private keyupCount: {[key: string]: number};
     private roles: {[key: string]: Role};
     private selfId: string;
     private map: Map;
@@ -27,7 +28,8 @@ export default class Main {
         this.diry = [0, -1, 0, 1]; // left, up, right, down
         this.map = new Map();
         this.keydown = {};
-        this.keycount = {};
+        this.keydownCount = {};
+        this.keyupCount = {};
         this.roles = {};
         this.dragList = {};
         this.shadowList = {};
@@ -117,8 +119,12 @@ export default class Main {
 
         if (this.roles[this.selfId].inAir) {
             this.freeFall(this.selfId);
-            if (this.keydown.KeyW && this.keycount.KeyW === 1) {
-                this.keycount.KeyW++;
+            if (
+                this.keydown.KeyW &&
+                this.keyupCount.KeyW === 1 &&
+                this.keydownCount.KeyW === this.keyupCount.KeyW
+            ) {
+                this.keyupCount.KeyW++;
                 this.roles[this.selfId].startY = this.roles[this.selfId].realY;
                 this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
                 this.roles[this.selfId].startTime = Date.now();
@@ -164,10 +170,12 @@ export default class Main {
         this.roles[id].realY = +(s0 - (v0 * dt + g * dt * dt / 2)).toFixed(0);
 
         if (v0 + g * dt > 0) {
-            this.collide(this.roles[id], true, 1);
+            if (this.collide(this.roles[id], true, 1)) {
+                this.keyupCount.KeyW++;
+            }
         } else {
             if (this.collide(this.roles[id], true, 3)) {
-                this.keycount.KeyW = 0;
+                this.keyupCount.KeyW = 0;
             }
         }
     }
@@ -175,6 +183,11 @@ export default class Main {
     private keyboardController(event: KeyboardEvent) {
         if (event.type === "keydown") {
             this.keydown[event.code] = true;
+            if (this.keydownCount[event.code] === undefined) {
+                this.keydownCount[event.code] = 0;
+            } else {
+                this.keydownCount[event.code]++;
+            }
             switch (event.code) {
                 case "KeyQ":
                     if (this.gameMode === "edit") {
@@ -202,11 +215,12 @@ export default class Main {
             }
         } else if (event.type === "keyup") {
             this.keydown[event.code] = false;
-            if (this.keycount[event.code] !== undefined) {
-                this.keycount[event.code]++;
+            if (this.keyupCount[event.code] === undefined) {
+                this.keyupCount[event.code] = 0;
             } else {
-                this.keycount[event.code] = 1;
+                this.keyupCount[event.code]++;
             }
+            this.keydownCount[event.code] = this.keyupCount[event.code] - 1;
         }
     }
     private roleMove(id: string, dir: number) {
@@ -440,7 +454,6 @@ export default class Main {
             host.realY -= (value[dir] * Math.abs(this.diry[dir]));
         }
         if (dir === 1) {
-            this.keycount.KeyW++;
             this.roles[this.selfId].startY = this.roles[this.selfId].realY;
             this.roles[this.selfId].startTime = Date.now();
             this.roles[this.selfId].initSpeed = -1;

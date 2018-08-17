@@ -440,6 +440,7 @@ export default class Main {
             host.realY -= (value[dir] * Math.abs(this.diry[dir]));
         }
         if (dir === 1) {
+            this.keycount.KeyW++;
             this.roles[this.selfId].startY = this.roles[this.selfId].realY;
             this.roles[this.selfId].startTime = Date.now();
             this.roles[this.selfId].initSpeed = -1;

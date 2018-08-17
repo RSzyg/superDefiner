@@ -20,15 +20,12 @@ export default class Role {
     public rightHand: Shape = new Shape();
     public leftFoot: Shape = new Shape();
     public rightFoot: Shape = new Shape();
+    public jumpPower: number;
+    public initSpeed: number;
     public moveStep: number;
-    public G: number = -10;
-    public startV: number = 40;
-    public time: number = 0;
-    public V: number = 40;
-    public inAir: boolean = false;
-    public repeatInAir: boolean = false;
-    public road: number = 0;
-    public freestep: number = 0;
+    public startTime: number;
+    public startY: number;
+    public inAir: boolean;
     private id: string;
     private selfx: number;
     private selfy: number;
@@ -36,7 +33,10 @@ export default class Role {
     constructor(data: {[key: string]: number}) {
         this.selfx = data.x;
         this.selfy = data.y;
+        this.initSpeed = this.jumpPower = data.jumpPower;
         this.moveStep = data.moveStep;
+        this.startTime = null;
+        this.inAir = false;
         this.create();
     }
 

@@ -18,6 +18,7 @@ export default class Main {
     private shadowList: {[key: string]: any};
     private pointerX: number;
     private pointerY: number;
+    private gravity: number;
     private gameMode: string;
 
     constructor() {
@@ -29,6 +30,7 @@ export default class Main {
         this.dragList = {};
         this.shadowList = {};
         this.touched = false;
+        this.gravity = -0.5;
         this.gameMode = "edit";
     }
 
@@ -94,7 +96,12 @@ export default class Main {
     }
 
     private createRole() {
-        const role: Role = new Role({ x: 120, y: 1120, moveStep: 5});
+        const role: Role = new Role({
+            jumpPower: 12,
+            moveStep: 4,
+            x: 120,
+            y: 1120,
+        });
         this.roles[role.uuid] = role;
         this.selfId = role.uuid;
     }
@@ -106,16 +113,16 @@ export default class Main {
             Camera.checkRange();
         }
 
-        if (!this.roles[this.selfId].inAir) {
+        if (this.roles[this.selfId].inAir) {
+            this.freeFall(this.selfId);
+        } else {
             this.roles[this.selfId].realY++;
-            if (!this.collision(this.roles[this.selfId], true, 3)) {
-                this.roles[this.selfId].V = 0;
-                this.roles[this.selfId].time = 4;
-                this.roles[this.selfId].road = 80;
-                this.roles[this.selfId].freestep = 0.2;
-                this.roles[this.selfId].realY--;
+            if (!this.collide(this.roles[this.selfId], true, 3)) {
                 this.roles[this.selfId].inAir = true;
-                this.roleMove(this.selfId, 3);
+                this.roles[this.selfId].realY--;
+                this.roles[this.selfId].startY = this.roles[this.selfId].realY;
+                this.roles[this.selfId].startTime = Date.now();
+                this.roles[this.selfId].initSpeed = 0;
             }
         }
 
@@ -124,32 +131,33 @@ export default class Main {
         }
         if (this.keydown.KeyW) {
             if (!this.roles[this.selfId].inAir) {
-                this.roles[this.selfId].V = 40;
-                this.roles[this.selfId].time = 0;
-                this.roles[this.selfId].road = 0;
-                this.roles[this.selfId].freestep = 0;
                 this.roles[this.selfId].inAir = true;
+                this.roles[this.selfId].startY = this.roles[this.selfId].realY;
+                this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
+                this.roles[this.selfId].startTime = Date.now();
             }
-        }
-        if (this.roles[this.selfId].inAir) {
-            if (this.roles[this.selfId].V > 0) {
-                this.roleMove(this.selfId, 1);
-            } else {
-                this.roleMove(this.selfId, 3);
-            }
-            this.roles[this.selfId].V += this.roles[this.selfId].G * 0.2;
-            this.roles[this.selfId].freestep =
-            this.roles[this.selfId].startV * this.roles[this.selfId].time +
-            0.5 * this.roles[this.selfId].G * this.roles[this.selfId].time * this.roles[this.selfId].time -
-            this.roles[this.selfId].road;
-            this.roles[this.selfId].road += this.roles[this.selfId].freestep;
-            this.roles[this.selfId].time += 0.2;
         }
 
         if (this.keydown.KeyD) {
             this.roleMove(this.selfId, 2);
         }
         requestAnimationFrame(() => this.update());
+    }
+
+    private freeFall(id: string) {
+        const time = Date.now();
+        const dt = (time - this.roles[id].startTime) / (1000 / 60);
+        const v0 = this.roles[id].initSpeed;
+        const s0 = this.roles[id].startY;
+        const g = this.gravity;
+
+        this.roles[id].realY = +(s0 - (v0 * dt + g * dt * dt / 2)).toFixed(0);
+
+        if (v0 + g * dt > 0) {
+            this.collide(this.roles[id], true, 1);
+        } else {
+            this.collide(this.roles[id], true, 3);
+        }
     }
 
     private keyboardController(event: KeyboardEvent) {
@@ -186,10 +194,10 @@ export default class Main {
     }
     private roleMove(id: string, dir: number) {
         this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
-        if (Math.abs(this.diry[dir])) {
-            this.roles[id].realY -= this.roles[this.selfId].freestep;
-        }
-        this.collision(this.roles[id], true, dir);
+        // if (Math.abs(this.diry[dir])) {
+        //     this.roles[id].realY -= this.roles[this.selfId].freestep;
+        // }
+        this.collide(this.roles[id], true, dir);
     }
 
     private dragBefore(event: any) {
@@ -245,7 +253,7 @@ export default class Main {
             const tempX = this.dragingGoods.realX;
             const tempY = this.dragingGoods.realY;
 
-            this.collision(this.dragingGoods, true, null);
+            this.collide(this.dragingGoods, true, null);
 
             const shadow = this.shadowList[this.dragingGoods.shadowId];
             const width = Map.blockWidth;
@@ -274,7 +282,7 @@ export default class Main {
         this.map.hideGrid();
         if (this.dragingGoods) {
             const shadow = this.shadowList[this.dragingGoods.shadowId];
-            if (this.collision(shadow, false, null)) {
+            if (this.collide(shadow, false, null)) {
                 shadow.removeFromContainer();
                 this.dragingGoods.removeFromContainer();
                 delete this.shadowList[shadow.uuid];
@@ -300,7 +308,7 @@ export default class Main {
         }
     }
 
-    private collision(
+    private collide(
         obj: {[key: string]: any | Role},
         correction: boolean, dir: number,
     ): boolean {
@@ -325,7 +333,7 @@ export default class Main {
                 this.dragList[id].shadowId !== obj.uuid
             ) {
                 const goods = this.dragList[id];
-                if (this.judgecillsion (false, obj, goods, correction, dir)) {
+                if (this.collisionJudge (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
@@ -337,7 +345,7 @@ export default class Main {
                 id !== obj.uuid
             ) {
                 const goods = this.map.block[id];
-                if (this.judgecillsion (false, obj, goods, correction, dir)) {
+                if (this.collisionJudge (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
@@ -349,7 +357,7 @@ export default class Main {
                 id !== obj.uuid
             ) {
                 const goods = this.roles[id];
-                if (this.judgecillsion (false, obj, goods, correction, dir)) {
+                if (this.collisionJudge (false, obj, goods, correction, dir)) {
                     judgement = true;
                     break;
                 }
@@ -358,7 +366,7 @@ export default class Main {
         return judgement;
     }
 
-    private judgecillsion(
+    private collisionJudge(
         judgement: boolean,
         obj: {[key: string]: any | Role},
         goods: {[key: string]: any | Role},
@@ -390,14 +398,10 @@ export default class Main {
             host.right - guest.left + 1,
             host.bottom - guest.top + 1,
         ];
-        host.realX -= (value[dir] * Math.abs(this.dirx[dir]));
-        host.realY -= (value[dir] * Math.abs(this.diry[dir]));
         if (dir === 3) {
-            this.roles[this.selfId].repeatInAir = false;
-            this.roles[this.selfId].inAir = false;
-            // this.roles[this.selfId].V = 40;
-            // this.roles[this.selfId].time = 0;
-            // this.roles[this.selfId].road = 0;
+            if (host.inAir) {
+                host.inAir = false;
+            }
         }
         if (dir === null) {
             let dx: number;

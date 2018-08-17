@@ -11,7 +11,12 @@ export default class Shape {
     public radius: number;
     public startAngle: number;
     public endAngle: number;
+    public display: boolean;
     private id: string;
+
+    constructor() {
+        this.display = true;
+    }
 
     public saveRect(x: number, y: number, width: number, height: number) {
         this.type = "rect";

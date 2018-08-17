@@ -6,6 +6,7 @@ export default class Menu {
 
     public static goodsCanvas: Canvas;
     public static board: Goods.Board;
+    public static wood: Goods.Wood;
 
     public static create() {
         if (Menu.goodsCanvas === undefined) {
@@ -15,6 +16,9 @@ export default class Menu {
         }
         if (Menu.board === undefined ) {
             Menu.board = new Goods.Board(1, 1, 1).addToMenu();
+        }
+        if (Menu.wood === undefined ) {
+            Menu.wood = new Goods.Wood(1, 16, 1).addToMenu();
         }
         return this;
     }

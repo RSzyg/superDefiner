@@ -129,6 +129,26 @@ export default class Main {
                 this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
                 this.roles[this.selfId].startTime = Date.now();
             }
+
+            const time = Date.now();
+            if (
+                this.keydown.KeyW &&
+                time - this.roles[this.selfId].catchCD > 600 &&
+                this.roles[this.selfId].catchDir !== null &&
+                this.keydownCount.KeyW === this.keyupCount.KeyW
+            ) {
+                const dir = this.roles[this.selfId].catchDir;
+                this.roles[this.selfId].catchDir = null;
+                this.roles[this.selfId].catchCD = time;
+
+                this.roles[this.selfId].realX += this.dirx[dir];
+                if (this.collide(this.roles[this.selfId], true, dir)) {
+                    this.roles[this.selfId].realX -= 40 * this.dirx[dir];
+                    this.roles[this.selfId].startY = this.roles[this.selfId].realY;
+                    this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
+                    this.roles[this.selfId].startTime = Date.now();
+                }
+            }
         } else {
             this.roles[this.selfId].realY++;
             if (!this.collide(this.roles[this.selfId], false, 3)) {
@@ -225,10 +245,16 @@ export default class Main {
     }
     private roleMove(id: string, dir: number) {
         this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
-        // if (Math.abs(this.diry[dir])) {
-        //     this.roles[id].realY -= this.roles[this.selfId].freestep;
-        // }
-        this.collide(this.roles[id], true, dir);
+
+        if (this.collide(this.roles[id], true, dir)) {
+            if (
+                this.roles[id].inAir &&
+                this.roles[id].catchDir === null &&
+                Date.now() - this.roles[id].catchCD > 600
+            ) {
+                this.roles[id].catchDir = dir;
+            }
+        }
     }
 
     private dragBefore(event: any) {

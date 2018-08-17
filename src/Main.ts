@@ -9,6 +9,7 @@ export default class Main {
     private dirx: number[]; // left, up, right, down
     private diry: number[]; // left, up, right, down
     private keydown: {[key: string]: boolean};
+    private keycount: {[key: string]: number};
     private roles: {[key: string]: Role};
     private selfId: string;
     private map: Map;
@@ -26,6 +27,7 @@ export default class Main {
         this.diry = [0, -1, 0, 1]; // left, up, right, down
         this.map = new Map();
         this.keydown = {};
+        this.keycount = {};
         this.roles = {};
         this.dragList = {};
         this.shadowList = {};
@@ -115,6 +117,12 @@ export default class Main {
 
         if (this.roles[this.selfId].inAir) {
             this.freeFall(this.selfId);
+            if (this.keydown.KeyW && this.keycount.KeyW) {
+                this.keycount.KeyW = 0;
+                this.roles[this.selfId].startY = this.roles[this.selfId].realY;
+                this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
+                this.roles[this.selfId].startTime = Date.now();
+            }
         } else {
             this.roles[this.selfId].realY++;
             if (!this.collide(this.roles[this.selfId], true, 3)) {
@@ -156,13 +164,18 @@ export default class Main {
         if (v0 + g * dt > 0) {
             this.collide(this.roles[id], true, 1);
         } else {
-            this.collide(this.roles[id], true, 3);
+            if (this.collide(this.roles[id], true, 3)) {
+                this.keycount.KeyW = 0;
+            }
         }
     }
 
     private keyboardController(event: KeyboardEvent) {
         if (event.type === "keydown") {
             this.keydown[event.code] = true;
+            if (this.keycount[event.code] === 2) {
+                this.keycount[event.code] = 0;
+            }
             switch (event.code) {
                 case "KeyQ":
                     if (this.gameMode === "edit") {
@@ -190,6 +203,11 @@ export default class Main {
             }
         } else if (event.type === "keyup") {
             this.keydown[event.code] = false;
+            if (this.keycount[event.code] !== undefined) {
+                this.keycount[event.code]++;
+            } else {
+                this.keycount[event.code] = 1;
+            }
         }
     }
     private roleMove(id: string, dir: number) {

@@ -117,8 +117,8 @@ export default class Main {
 
         if (this.roles[this.selfId].inAir) {
             this.freeFall(this.selfId);
-            if (this.keydown.KeyW && this.keycount.KeyW) {
-                this.keycount.KeyW = 0;
+            if (this.keydown.KeyW && this.keycount.KeyW === 1) {
+                this.keycount.KeyW++;
                 this.roles[this.selfId].startY = this.roles[this.selfId].realY;
                 this.roles[this.selfId].initSpeed = this.roles[this.selfId].jumpPower;
                 this.roles[this.selfId].startTime = Date.now();
@@ -173,9 +173,7 @@ export default class Main {
     private keyboardController(event: KeyboardEvent) {
         if (event.type === "keydown") {
             this.keydown[event.code] = true;
-            if (this.keycount[event.code] === 2) {
-                this.keycount[event.code] = 0;
-            }
+            console.log(this.keydown[event.code], this.keycount[event.code]);
             switch (event.code) {
                 case "KeyQ":
                     if (this.gameMode === "edit") {

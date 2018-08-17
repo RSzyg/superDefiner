@@ -24,7 +24,7 @@ export default class Role {
     public G: number = -10;
     public startV: number = 40;
     public time: number = 0;
-    public V: number = 20;
+    public V: number = 40;
     public inAir: boolean = false;
     public repeatInAir: boolean = false;
     public road: number = 0;

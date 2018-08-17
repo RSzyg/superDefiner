@@ -64,33 +64,47 @@ export default class Main {
     }
 
     private update() {
+        if (!this.roles[this.selfId].inAir) {
+            this.roles[this.selfId].realY++;
+            if (!this.collision(this.roles[this.selfId], true, 3)) {
+                this.roles[this.selfId].V = 0;
+                this.roles[this.selfId].time = 4;
+                this.roles[this.selfId].road = 80;
+                this.roles[this.selfId].freestep = 0.2;
+                this.roles[this.selfId].realY--;
+                this.roles[this.selfId].inAir = true;
+                this.roleMove(this.selfId, 3);
+            }
+        }
         if (this.keydown.KeyA) {
             this.roleMove(this.selfId, 0);
         }
         if (this.keydown.KeyW) {
-            if (this.collision(this.roles[this.selfId], true, 3)) {
+            if (!this.roles[this.selfId].inAir) {
+                this.roles[this.selfId].V = 40;
+                this.roles[this.selfId].time = 0;
+                this.roles[this.selfId].road = 0;
+                this.roles[this.selfId].freestep = 0;
                 this.roles[this.selfId].inAir = true;
             }
         }
         if (this.roles[this.selfId].inAir) {
-            this.roleMove(this.selfId, 1);
+            if (this.roles[this.selfId].V > 0) {
+                this.roleMove(this.selfId, 1);
+            } else {
+                this.roleMove(this.selfId, 3);
+            }
             this.roles[this.selfId].V += this.roles[this.selfId].G * 0.2;
             this.roles[this.selfId].freestep =
             this.roles[this.selfId].startV * this.roles[this.selfId].time +
             0.5 * this.roles[this.selfId].G * this.roles[this.selfId].time * this.roles[this.selfId].time -
             this.roles[this.selfId].road;
-            this.roles[this.selfId].road =
-            this.roles[this.selfId].startV * this.roles[this.selfId].time +
-            0.5 * this.roles[this.selfId].G * this.roles[this.selfId].time * this.roles[this.selfId].time;
+            this.roles[this.selfId].road += this.roles[this.selfId].freestep;
             this.roles[this.selfId].time += 0.2;
         }
+
         if (this.keydown.KeyD) {
             this.roleMove(this.selfId, 2);
-        }
-        if (!this.roles[this.selfId].inAir) {
-            if (!this.collision(this.roles[this.selfId], true, 3)) {
-                this.roleMove(this.selfId, 3);
-            }
         }
         requestAnimationFrame(() => this.update());
     }
@@ -103,15 +117,14 @@ export default class Main {
                     this.menuController();
                     break;
                 case "KeyW":
-                    this.roles[this.selfId].realY += 1;
-                    if (this.roles[this.selfId].inAir && !this.roles[this.selfId].repeatInAir) {
-                        this.roles[this.selfId].repeatInAir = true;
-                        if (this.roles[this.selfId].repeatInAir) {
-                            this.roles[this.selfId].V = 0;
-                            this.roles[this.selfId].time = 0;
-                            this.roles[this.selfId].road = 0;
-                        }
-                    }
+                    // if (this.roles[this.selfId].inAir && !this.roles[this.selfId].repeatInAir) {
+                    //     this.roles[this.selfId].repeatInAir = true;
+                    //     if (this.roles[this.selfId].repeatInAir) {
+                    //         this.roles[this.selfId].V = 0;
+                    //         this.roles[this.selfId].time = 0;
+                    //         this.roles[this.selfId].road = 0;
+                    //     }
+                    // }
                     break;
                 default:
                     break;
@@ -122,13 +135,8 @@ export default class Main {
     }
     private roleMove(id: string, dir: number) {
         this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
-        if (dir === 1) {
-            this.roles[id].realY += -this.roles[this.selfId].freestep;
-        } else {
-            this.roles[id].realY += this.roles[this.selfId].moveStep * this.diry[dir];
-        }
-        if (this.roles[id].V < 0) {
-            this.collision(this.roles[id], true, 3);
+        if (Math.abs(this.diry[dir])) {
+            this.roles[id].realY -= this.roles[this.selfId].freestep;
         }
         this.collision(this.roles[id], true, dir);
     }
@@ -327,9 +335,9 @@ export default class Main {
         if (dir === 3) {
             this.roles[this.selfId].repeatInAir = false;
             this.roles[this.selfId].inAir = false;
-            this.roles[this.selfId].V = 0;
-            this.roles[this.selfId].time = 0;
-            this.roles[this.selfId].road = 0;
+            // this.roles[this.selfId].V = 40;
+            // this.roles[this.selfId].time = 0;
+            // this.roles[this.selfId].road = 0;
         }
     }
 

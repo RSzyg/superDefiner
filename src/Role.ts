@@ -21,6 +21,14 @@ export default class Role {
     public leftFoot: Shape = new Shape();
     public rightFoot: Shape = new Shape();
     public moveStep: number;
+    public G: number = -10;
+    public startV: number = 40;
+    public time: number = 0;
+    public V: number = 40;
+    public inAir: boolean = false;
+    public repeatInAir: boolean = false;
+    public road: number = 0;
+    public freestep: number = 0;
     private id: string;
     private selfx: number;
     private selfy: number;

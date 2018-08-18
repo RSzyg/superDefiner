@@ -258,6 +258,28 @@ export default class Main {
             this.shadowList[shadow.uuid] = shadow;
             this.dragingGoods = board;
         }
+        if (Menu.Lurker.clickInMenu(this.pointerX, this.pointerY)) {
+            Menu.goodsCanvas.canvas.style.display = "none";
+            this.map.showGrid();
+            const lurker = new Goods.Lurker(
+                (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
+                (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
+                1,
+            );
+            const shadow = new Goods.Lurker(
+                +(lurker.realX / Map.blockWidth).toFixed(0),
+                +(lurker.realY / Map.blockHeight).toFixed(0),
+                0.4,
+            );
+
+            lurker.shadowId = shadow.uuid;
+            shadow.addToContainer();
+            lurker.addToContainer();
+
+            this.dragList[lurker.uuid] = lurker;
+            this.shadowList[shadow.uuid] = shadow;
+            this.dragingGoods = lurker;
+        }
     }
 
     private dragMove(event: any) {
@@ -266,7 +288,6 @@ export default class Main {
         if (this.dragingGoods !== undefined) {
             this.dragingGoods.x += (x - this.pointerX);
             this.dragingGoods.y += (y - this.pointerY);
-
             const tempX = this.dragingGoods.realX;
             const tempY = this.dragingGoods.realY;
 

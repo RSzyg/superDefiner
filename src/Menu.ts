@@ -6,6 +6,9 @@ export default class Menu {
 
     public static goodsCanvas: Canvas;
     public static board: Goods.Board;
+    public static Lurker: Goods.Lurker;
+    public static Flagbegin: Goods.Flag;
+    public static Flagend: Goods.Flag;
 
     public static create() {
         if (Menu.goodsCanvas === undefined) {
@@ -15,6 +18,15 @@ export default class Menu {
         }
         if (Menu.board === undefined ) {
             Menu.board = new Goods.Board(1, 1, 1).addToMenu();
+        }
+        if (Menu.Lurker === undefined) {
+            Menu.Lurker = new Goods.Lurker(1, 4, 1).addToMenu();
+        }
+        if (Menu.Flagbegin === undefined) {
+            Menu.Flagbegin = new Goods.Flag(1, 7, "#CD0000").addToMenu();
+        }
+        if (Menu.Flagend === undefined) {
+            Menu.Flagend = new Goods.Flag(3, 7, "#912CEE").addToMenu();
         }
         return this;
     }

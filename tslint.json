@@ -1,4 +1,7 @@
 {
     "extends": "tslint:recommended",
-    "rulesDirectory": ["./node_modules/tslint/lib/rules"]
+    "rulesDirectory": ["./node_modules/tslint/lib/rules"],
+    "rules": {
+        "no-namespace": false
+    }
 }

@@ -15,7 +15,6 @@ export default class Board {
     private heightCoef: number;
 
     constructor(x: number, y: number, alpha: number) {
-        this.draggable = false;
         this.main = new Shape();
         this.texture = [];
         this.widthCoef = 6;

@@ -25,6 +25,8 @@ export default class Role {
     public moveStep: number;
     public startTime: number;
     public startY: number;
+    public catchDir: number;
+    public catchCD: number;
     public inAir: boolean;
     private id: string;
     private selfx: number;
@@ -36,6 +38,9 @@ export default class Role {
         this.initSpeed = this.jumpPower = data.jumpPower;
         this.moveStep = data.moveStep;
         this.startTime = null;
+        this.startY = null;
+        this.catchDir = null;
+        this.catchCD = 0;
         this.inAir = false;
         this.create();
     }

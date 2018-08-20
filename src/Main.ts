@@ -1,6 +1,7 @@
 import Camera from "./Camera";
 import Container from "./Container";
-import * as Goods from "./Goods";
+import Goods from "./Goods";
+// import * as Goods from "./Goods";
 import Map from "./Map";
 import Menu from "./Menu";
 import Role from "./Role";
@@ -214,16 +215,6 @@ export default class Main {
                         this.menuController();
                     }
                     break;
-                case "KeyW":
-                    // if (this.roles[this.selfId].inAir && !this.roles[this.selfId].repeatInAir) {
-                    //     this.roles[this.selfId].repeatInAir = true;
-                    //     if (this.roles[this.selfId].repeatInAir) {
-                    //         this.roles[this.selfId].V = 0;
-                    //         this.roles[this.selfId].time = 0;
-                    //         this.roles[this.selfId].road = 0;
-                    //     }
-                    // }
-                    break;
                 case "KeyE":
                     if (this.gameMode === "edit") {
                         this.gameMode = "start";
@@ -276,50 +267,34 @@ export default class Main {
     private dragGoodsBefore(event: any) {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
-        if (Menu.board.clickInMenu(this.pointerX, this.pointerY)) {
-            Menu.goodsCanvas.canvas.style.display = "none";
-            this.map.showGrid();
-            const board = new Goods.Board(
+        const good = Menu.clickInMenu(this.pointerX, this.pointerY);
+        if (good.type) {
+            this.createGoods(
                 (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
                 (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
-                1,
+                good.fillstyle,
+                good.type,
             );
-            const shadow = new Goods.Board(
-                +(board.realX / Map.blockWidth).toFixed(0),
-                +(board.realY / Map.blockHeight).toFixed(0),
-                0.4,
-            );
-
-            board.shadowId = shadow.uuid;
-            shadow.addToContainer();
-            board.addToContainer();
-
-            this.dragList[board.uuid] = board;
-            this.shadowList[shadow.uuid] = shadow;
-            this.dragingGoods = board;
         }
-        if (Menu.Lurker.clickInMenu(this.pointerX, this.pointerY)) {
-            Menu.goodsCanvas.canvas.style.display = "none";
-            this.map.showGrid();
-            const lurker = new Goods.Lurker(
-                (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
-                (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
-                1,
-            );
-            const shadow = new Goods.Lurker(
-                +(lurker.realX / Map.blockWidth).toFixed(0),
-                +(lurker.realY / Map.blockHeight).toFixed(0),
-                0.4,
-            );
+    }
 
-            lurker.shadowId = shadow.uuid;
-            shadow.addToContainer();
-            lurker.addToContainer();
-
-            this.dragList[lurker.uuid] = lurker;
-            this.shadowList[shadow.uuid] = shadow;
-            this.dragingGoods = lurker;
+    private createGoods(x: number, y: number, fillstyle: string, type: string) {
+        Menu.goodsCanvas.canvas.style.display = "none";
+        this.map.showGrid();
+        let fillstyleAlpha;
+        if (fillstyle) {
+            fillstyleAlpha = fillstyle === "rgba(205, 0, 0, 1)" ? "rgba(205, 0, 0, 0.4)" : "rgba(145,44,238,0.4)";
         }
+        const good = new Goods(x, y, fillstyle, 1, type);
+        const shadow = new Goods(x, y, fillstyleAlpha, 0.4, type);
+
+        good.shadowId = shadow.uuid;
+        shadow.addToContainer();
+        good.addToContainer();
+
+        this.dragList[good.uuid] = good;
+        this.shadowList[shadow.uuid] = shadow;
+        this.dragingGoods = good;
     }
 
     private dragMove(event: any) {

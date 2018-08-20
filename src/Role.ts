@@ -1,6 +1,6 @@
-import Camera from "./Camera";
+// import Camera from "./Camera";
 import Container from "./Container";
-import Map from "./Map";
+// import Map from "./Map";
 import Shape from "./Shape";
 
 export default class Role {

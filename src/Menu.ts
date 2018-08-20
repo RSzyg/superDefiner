@@ -1,15 +1,16 @@
 import Canvas from "./Canvas";
-import * as Goods from "./Goods";
+import Goods from "./Goods";
+// import * as Goods from "./Goods";
 import Shape from "./Shape";
 
 export default class Menu {
 
     public static goodsCanvas: Canvas;
-    public static board: Goods.Board;
-    public static Lurker: Goods.Lurker;
-    public static Flagbegin: Goods.Flag;
-    public static Flagend: Goods.Flag;
-    public static wood: Goods.Wood;
+    public static board: Goods;
+    public static lurker: Goods;
+    public static flagbegin: Goods;
+    public static flagend: Goods;
+    public static wood: Goods;
 
     public static create() {
         if (Menu.goodsCanvas === undefined) {
@@ -17,20 +18,25 @@ export default class Menu {
             Menu.goodsCanvas.canvas.style.display = "none";
             Menu.goodsCanvas.canvas.style.backgroundColor = "#66ccff";
         }
-        if (Menu.board === undefined ) {
-            Menu.board = new Goods.Board(1, 1, 1).addToMenu();
+        if (Menu.board === undefined) {
+            Menu.board = new Goods(1, 1, "", 1, "board").addToMenu();
+            Menu.goodsList[Menu.board.uuid] = Menu.board;
         }
-        if (Menu.Lurker === undefined) {
-            Menu.Lurker = new Goods.Lurker(1, 4, 1).addToMenu();
+        if (Menu.lurker === undefined) {
+            Menu.lurker = new Goods(1, 4, "", 1, "lurker").addToMenu();
+            Menu.goodsList[Menu.lurker.uuid] = Menu.lurker;
         }
-        if (Menu.Flagbegin === undefined) {
-            Menu.Flagbegin = new Goods.Flag(1, 7, "#CD0000").addToMenu();
+        if (Menu.flagbegin === undefined) {
+            Menu.flagbegin = new Goods(1, 7, "rgba(205, 0, 0, 1)", 1, "flag").addToMenu();
+            Menu.goodsList[Menu.flagbegin.uuid] = Menu.flagbegin;
         }
-        if (Menu.Flagend === undefined) {
-            Menu.Flagend = new Goods.Flag(3, 7, "#912CEE").addToMenu();
+        if (Menu.flagend === undefined) {
+            Menu.flagend = new Goods(3, 7, "rgba(145,44,238,1)", 1, "flag").addToMenu();
+            Menu.goodsList[Menu.flagend.uuid] = Menu.flagend;
         }
         if (Menu.wood === undefined ) {
-            Menu.wood = new Goods.Wood(1, 16, 1).addToMenu();
+            Menu.wood = new Goods(1, 16, "", 1, "wood").addToMenu();
+            Menu.goodsList[Menu.wood.uuid] = Menu.wood;
         }
         return this;
     }
@@ -43,6 +49,20 @@ export default class Menu {
     public static removeChild(id: string) {
         delete Menu.elements[id];
         return this;
+    }
+
+    public static clickInMenu(x: number, y: number) {
+        for (const id in Menu.goodsList) {
+            if (Menu.goodsList[id]) {
+                const good = Menu.goodsList[id];
+                if (x > good.left && x < good.right) {
+                    if (y > good.top && y < good.bottom) {
+                        return good;
+                    }
+                }
+            }
+        }
+        return undefined;
     }
 
     public static render() {
@@ -147,4 +167,5 @@ export default class Menu {
     }
 
     private static elements: {[key: string]: any} = {};
+    private static goodsList: {[key: string]: any} = {};
 }

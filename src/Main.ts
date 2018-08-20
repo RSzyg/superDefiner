@@ -382,6 +382,7 @@ export default class Main {
         for (const id in this.dragList) {
             if (
                 this.dragList[id] &&
+                this.dragList[id].type !== "flag" &&
                 id !== obj.uuid &&
                 this.dragList[id].shadowId !== obj.uuid
             ) {

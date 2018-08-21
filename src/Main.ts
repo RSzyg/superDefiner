@@ -166,6 +166,7 @@ export default class Main {
         if (this.keydown.KeyA) {
             this.roleMove(this.selfId, 0);
         }
+
         if (this.keydown.KeyW) {
             if (!this.roles[this.selfId].inAir) {
                 this.roles[this.selfId].inAir = true;
@@ -382,14 +383,15 @@ export default class Main {
         for (const id in this.dragList) {
             if (
                 this.dragList[id] &&
-                this.dragList[id].type !== "flag" &&
                 id !== obj.uuid &&
                 this.dragList[id].shadowId !== obj.uuid
             ) {
-                const goods = this.dragList[id];
-                if (this.collisionJudge (false, obj, goods, correction, dir)) {
-                    judgement = true;
-                    break;
+                if (!(obj.type === "role" && this.dragList[id].type === "flag")) {
+                    const goods = this.dragList[id];
+                    if (this.collisionJudge (false, obj, goods, correction, dir)) {
+                        judgement = true;
+                        break;
+                    }
                 }
             }
         }

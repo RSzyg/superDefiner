@@ -5,21 +5,23 @@ import Shape from "./Shape";
 
 export default class Role {
     public static id = 0;
+    public type: string;
     public width: number = 40;
     public height: number = 70;
-    public headradius: number = 10;
-    public neckheight: number = 5;
-    public bodyheight: number = 35;
-    public footheight: number = 15;
-    public handheight: number = 15;
-    public footwidth: number = 20;
-    public handwidth: number = 20;
+    public headradius: number = Math.floor(1 / 7 * this.height);
+    public neckheight: number = Math.floor(1 / 14 * this.height);
+    public bodyheight: number = Math.floor(1 / 2 * this.height);
+    public footheight: number = Math.floor(3 / 14 * this.height);
+    public handheight: number = Math.floor(3 / 14 * this.height);
+    public footwidth: number = Math.floor(1 / 2 * this.width);
+    public handwidth: number = Math.floor(1 / 2 * this.width);
     public head: Shape = new Shape();
     public body: Shape = new Shape();
     public leftHand: Shape = new Shape();
     public rightHand: Shape = new Shape();
     public leftFoot: Shape = new Shape();
     public rightFoot: Shape = new Shape();
+
     public jumpPower: number;
     public initSpeed: number;
     public moveStep: number;
@@ -27,12 +29,14 @@ export default class Role {
     public startY: number;
     public catchDir: number;
     public catchCD: number;
+    public runCD: number;
     public inAir: boolean;
     private id: string;
     private selfx: number;
     private selfy: number;
 
     constructor(data: {[key: string]: number}) {
+        this.type = "role";
         this.selfx = data.x;
         this.selfy = data.y;
         this.initSpeed = this.jumpPower = data.jumpPower;

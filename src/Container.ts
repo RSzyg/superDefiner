@@ -12,7 +12,6 @@ export default class Container {
         }
         return this;
     }
-
     public static render() {
         Container.mainCanvas.canvas.height = Container.mainCanvas.canvas.height;
         for (const id in Container.elements) {

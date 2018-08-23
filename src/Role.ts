@@ -6,8 +6,8 @@ import Shape from "./Shape";
 export default class Role {
     public static id = 0;
     public type: string;
-    public width: number = 40;
-    public height: number = 70;
+    public width: number;
+    public height: number;
     public headradius: number = Math.floor(1 / 7 * this.height);
     public neckheight: number = Math.floor(1 / 14 * this.height);
     public bodyheight: number = Math.floor(1 / 2 * this.height);
@@ -39,6 +39,8 @@ export default class Role {
         this.type = "role";
         this.selfx = data.x;
         this.selfy = data.y;
+        this.height = data.height;
+        this.width = data.width;
         this.initSpeed = this.jumpPower = data.jumpPower;
         this.moveStep = data.moveStep;
         this.startTime = null;
@@ -46,10 +48,17 @@ export default class Role {
         this.catchDir = null;
         this.catchCD = 0;
         this.inAir = false;
+        this.headradius = Math.floor(1 / 7 * this.height);
+        this.neckheight = Math.floor(1 / 14 * this.height);
+        this.bodyheight = Math.floor(1 / 2 * this.height);
+        this.footheight = Math.floor(3 / 14 * this.height);
+        this.handheight = Math.floor(3 / 14 * this.height);
+        this.footwidth = Math.floor(1 / 2 * this.width);
+        this.handwidth = Math.floor(1 / 2 * this.width);
         this.create();
     }
 
-    private create() {
+    public create() {
         this.head.saveCircle(this.selfx + this.width / 2, this.selfy + this.headradius, this.headradius);
         this.head.saveStroke("black", 2);
         this.body.saveLine(
@@ -85,7 +94,14 @@ export default class Role {
         Container.addChild(this.rightFoot);
         this.id = "role" + Role.nextid;
     }
-
+    public removeFromContainer() {
+        Container.removeChild(this.head.uuid);
+        Container.removeChild(this.body.uuid);
+        Container.removeChild(this.leftHand.uuid);
+        Container.removeChild(this.rightHand.uuid);
+        Container.removeChild(this.leftFoot.uuid);
+        Container.removeChild(this.rightFoot.uuid);
+    }
     private static get nextid(): number {
         return Role.id++;
     }
@@ -93,7 +109,6 @@ export default class Role {
     get uuid(): string {
         return this.id;
     }
-
     get realX() {
         return this.selfx;
     }

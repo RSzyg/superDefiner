@@ -50,7 +50,7 @@ export default class Main {
             this.socket.emit("load");
         });
 
-        // 添加所有任务
+        // 添加所有人物
         this.socket.on("createRole", (data: string) => {
             this.selfId = JSON.parse(data).id;
             const allDatas = JSON.parse(data).allDatas;

@@ -3,7 +3,7 @@ import Container from "./Container";
 import { start } from "./Loading";
 
 $(document).ready(() => {
-   $("#startBtn").click(() => {
+    $("#startBtn").click(() => {
         $("#start").remove();
         Container.createMainMap().render();
         start();

@@ -230,6 +230,9 @@ export default class Goods {
         return this.id;
     }
 
+    set uuid(id: string) {
+        this.id = id;
+    }
     get x() {
         return this.selfX * Camera.scale - Camera.x;
     }

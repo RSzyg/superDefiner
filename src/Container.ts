@@ -8,7 +8,7 @@ export default class Container {
     public static createMainMap() {
         if (Container.mainCanvas === undefined) {
             Container.mainCanvas = new Canvas(1000, 800, "1", "absolute");
-            Container.mainCanvas.canvas.style.background = "#E9E9E9";
+            Container.mainCanvas.canvas.style.backgroundImage = "url(timg.jpg)";
         }
         return this;
     }

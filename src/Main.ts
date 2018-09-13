@@ -76,6 +76,12 @@ export default class Main {
             });
             window.addEventListener("keydown", (event) => { this.keyboardController(event); });
             window.addEventListener("keyup", (event) => { this.keyboardController(event); });
+            // 人物移动
+            this.socket.on("roleMove", (alldata: string) => {
+                const datas = JSON.parse(alldata);
+                this.roles[datas.id].realX = datas.x;
+                this.roles[datas.id].realY = datas.y;
+            });
         });
 
         // 添加新人物
@@ -90,18 +96,20 @@ export default class Main {
             delete this.roles[id];
         });
 
-        // 人物移动
-        this.socket.on("roleMove", (alldata: string) => {
-            const datas = JSON.parse(alldata);
-            this.roles[datas.id].realX = datas.x;
-            this.roles[datas.id].realY = datas.y;
-        });
+        // // 人物移动
+        // this.socket.on("roleMove", (alldata: string) => {
+        //     const datas = JSON.parse(alldata);
+        //     console.log(datas);
+        //     this.roles[datas.id].realX = datas.x;
+        //     this.roles[datas.id].realY = datas.y;
+        // });
 
         // // 放置物品
         // this.socket.on("placeGoods", (data: string) => {
         //     const datas = JSON.parse(data);
         //     this.createGoods(datas.x, datas.y, datas.fillstyle, datas.type);
         // });
+
         // // 人物左移
         // this.socket.on("moveLeft", (data: string) => {
         //     const id = JSON.parse(data);

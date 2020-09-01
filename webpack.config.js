@@ -10,6 +10,12 @@ module.exports = {
           { loader: 'ts-loader' },
           { loader: 'tslint-loader' }
         ]
+      },
+      {
+        test: /\.(png|jpg|gif)/,
+        use:[
+          { loader: 'url-loader' }
+        ]
       }
     ]
   },

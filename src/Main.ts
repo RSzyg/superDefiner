@@ -1,7 +1,6 @@
 import Camera from "./Camera";
 import Container from "./Container";
 import Goods from "./Goods";
-// import * as Goods from "./Goods";
 import Map from "./Map";
 import Menu from "./Menu";
 import Role from "./Role";
@@ -23,6 +22,7 @@ export default class Main {
     private pointerY: number;
     private gravity: number;
     private gameMode: string;
+    private socket: SocketIOClient.Socket;
 
     constructor() {
         this.dirx = [-1, 0, 1, 0]; // left, up, right, down
@@ -40,23 +40,92 @@ export default class Main {
     }
 
     public createScene() {
-        this.map.createMap(2000, 1600, 40, 40);
-        this.createRole();
 
-        Camera.centerX = this.roles[this.selfId].realX + this.roles[this.selfId].width / 2;
-        Camera.centerY = this.roles[this.selfId].realY + this.roles[this.selfId].height / 2;
-        Camera.checkRange();
+        this.socket = io.connect(window.location.host);
 
-        this.update();
-        Menu.create();
-
-        window.addEventListener("keydown", (event) => { this.keyboardController(event); });
-        window.addEventListener("keyup", (event) => { this.keyboardController(event); });
-        Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => {
-            if (this.gameMode === "edit") {
-                this.dragGoodsBefore(event);
-            }
+        // 加载地图
+        this.socket.on("init", (data: string) => {
+            const loadData = JSON.parse(data);
+            this.map.createMap(loadData.width, loadData.height, loadData.blockWidth, loadData.blockHeight);
+            this.socket.emit("load");
         });
+
+        // 添加所有人物
+        this.socket.on("createRole", (data: string) => {
+            this.selfId = JSON.parse(data).id;
+            const allDatas = JSON.parse(data).allDatas;
+            for (const key in allDatas) {
+                if (key) {
+                    this.roles[key] = this.createRole(allDatas[key]);
+                }
+            }
+            Menu.create();
+            Camera.centerX = this.roles[this.selfId].realX + this.roles[this.selfId].width / 2;
+            Camera.centerY = this.roles[this.selfId].realY + this.roles[this.selfId].height / 2;
+            this.update();
+            Camera.checkRange();
+            Menu.goodsCanvas.canvas.addEventListener("mousedown", (event) => {
+                if (this.gameMode === "edit") {
+                    this.dragGoodsBefore(event);
+                }
+            });
+            Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {
+                if (this.gameMode === "edit") {
+                    this.dragEnd(event);
+                }
+            });
+            window.addEventListener("keydown", (event) => { this.keyboardController(event); });
+            window.addEventListener("keyup", (event) => { this.keyboardController(event); });
+            // 人物移动
+            this.socket.on("roleMove", (alldata: string) => {
+                const datas = JSON.parse(alldata);
+                this.roles[datas.id].realX = datas.x;
+                this.roles[datas.id].realY = datas.y;
+            });
+        });
+
+        // 添加新人物
+        this.socket.on("addRole", (data: string) => {
+            const newRole = JSON.parse(data);
+            this.roles[newRole.id] = this.createRole(newRole);
+        });
+        // 人物离开
+        this.socket.on("leave", (data: string) => {
+            const id = JSON.parse(data);
+            this.roles[id].removeFromContainer();
+            delete this.roles[id];
+        });
+
+        // // 人物移动
+        // this.socket.on("roleMove", (alldata: string) => {
+        //     const datas = JSON.parse(alldata);
+        //     console.log(datas);
+        //     this.roles[datas.id].realX = datas.x;
+        //     this.roles[datas.id].realY = datas.y;
+        // });
+
+        // // 放置物品
+        // this.socket.on("placeGoods", (data: string) => {
+        //     const datas = JSON.parse(data);
+        //     this.createGoods(datas.x, datas.y, datas.fillstyle, datas.type);
+        // });
+
+        // // 人物左移
+        // this.socket.on("moveLeft", (data: string) => {
+        //     const id = JSON.parse(data);
+        //     this.roleMove(id, 0);
+        // });
+
+        // // 人物右移
+        // this.socket.on("moveRight", (data: string) => {
+        //     const id = JSON.parse(data);
+        //     this.roleMove(id, 2);
+        // });
+
+        // // 人物跳跃
+        // this.socket.on("moveJump", (data: string) => {
+        //     const id = JSON.parse(data);
+        // });
         Container.mainCanvas.canvas.addEventListener("mousedown", (event) => {
             if (this.gameMode === "edit") {
                 this.dragBefore(event);
@@ -86,11 +155,6 @@ export default class Main {
                 this.dragEnd(event);
             }
         });
-        Menu.goodsCanvas.canvas.addEventListener("mouseup", (event) => {
-            if (this.gameMode === "edit") {
-                this.dragEnd(event);
-            }
-        });
         Container.mainCanvas.canvas.addEventListener("touchend", (event) => {
             if (this.gameMode === "edit") {
                 this.dragEnd(event);
@@ -98,17 +162,19 @@ export default class Main {
         });
 
         Container.mainCanvas.canvas.addEventListener("wheel", (event) => { this.zoom(event); });
+
     }
 
-    private createRole() {
-        const role: Role = new Role({
-            jumpPower: 12,
-            moveStep: 4,
-            x: 120,
-            y: 1120,
+    private createRole(role: {[key: string]: any}) {
+        const roles = new Role({
+            height: role.height,
+            jumpPower: role.jumpPower,
+            moveStep: role.moveStep,
+            width: role.width,
+            x: role.x,
+            y: role.y,
         });
-        this.roles[role.uuid] = role;
-        this.selfId = role.uuid;
+        return roles;
     }
 
     private update() {
@@ -164,6 +230,7 @@ export default class Main {
         }
 
         if (this.keydown.KeyA) {
+            this.socket.emit("left");
             this.roleMove(this.selfId, 0);
         }
 
@@ -177,8 +244,15 @@ export default class Main {
         }
 
         if (this.keydown.KeyD) {
+            this.socket.emit("right");
             this.roleMove(this.selfId, 2);
         }
+        const data = {
+            x: this.roles[this.selfId].realX,
+            y: this.roles[this.selfId].realY,
+        };
+        this.socket.emit("move", JSON.stringify(data));
+
         requestAnimationFrame(() => this.update());
     }
 
@@ -237,7 +311,6 @@ export default class Main {
     }
     private roleMove(id: string, dir: number) {
         this.roles[id].realX += this.roles[id].moveStep * this.dirx[dir];
-
         if (this.collide(this.roles[id], true, dir)) {
             if (
                 this.roles[id].inAir &&
@@ -269,7 +342,7 @@ export default class Main {
         this.pointerX = event.type === "mousedown" ? event.pageX : event.touches[0].pageX;
         this.pointerY = event.type === "mousedown" ? event.pageY : event.touches[0].pageY;
         const good = Menu.clickInMenu(this.pointerX, this.pointerY);
-        if (good.type) {
+        if (good && good.type) {
             this.createGoods(
                 (this.pointerX + Camera.x) / Camera.scale / Map.blockWidth,
                 (this.pointerY + Camera.y) / Camera.scale / Map.blockHeight,
@@ -344,6 +417,15 @@ export default class Main {
             } else {
                 this.dragingGoods.x = shadow.realX * Camera.scale - Camera.x;
                 this.dragingGoods.y = shadow.realY * Camera.scale - Camera.y;
+
+                // const data = {
+                //     fillstyle: this.dragingGoods.fillstyle,
+                //     id: this.dragingGoods.uuid,
+                //     type: this.dragingGoods.type,
+                //     x: shadow.realX * Camera.scale - Camera.x,
+                //     y: shadow.realY * Camera.scale - Camera.y,
+                // };
+                // this.socket.emit("Goods", JSON.stringify(data));
             }
         }
         Camera.checkRange();
@@ -410,7 +492,8 @@ export default class Main {
         for (const id in this.roles) {
             if (
                 this.roles[id] &&
-                id !== obj.uuid
+                (obj.type !== "role" && id !== obj.uuid) ||
+                (obj.type === "role" && id !== this.selfId)
             ) {
                 const goods = this.roles[id];
                 if (this.collisionJudge (false, obj, goods, correction, dir)) {
